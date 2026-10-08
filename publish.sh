@@ -6,6 +6,6 @@ set -e
 cd "$(dirname "$0")"
 git add -A
 git diff --cached --quiet && { echo "Nothing changed"; exit 0; }
-git commit -qm "Update brand guides"
+git commit -qm "${1:-Update brand guides}"
 git push -q
 echo "Pushed. Live in a minute at https://brandguide.studioblunt.com/"
