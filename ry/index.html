@@ -215,8 +215,14 @@
   /* ---------- DOWNLOADS ---------- */
   .downloads .box { aspect-ratio: auto; min-height: 340px; grid-column: span 3 }
   .downloads .box a.dl { text-decoration: none }
-  .downloads .box a.dl::after { content: " ↓" }
-  .downloads .box a.dl:hover { opacity: .6 }
+  /* The whole box is the link: the anchor's ::before covers the box. */
+  .downloads .box { position: relative; transition: transform var(--dur-2) var(--ease) }
+  .downloads .box a.dl::before { content: ""; position: absolute; inset: 0; border-radius: inherit }
+  .downloads .box a.dl::after { content: "↓"; display: inline-block; margin-left: .3em; transition: transform var(--dur-2) var(--ease) }
+  .downloads .box a.dl:hover, .downloads .box a.dl:focus-visible { opacity: 1 }
+  .downloads .box:hover, .downloads .box:focus-within { transform: translateY(-6px) }
+  .downloads .box:hover a.dl::after, .downloads .box:focus-within a.dl::after { transform: translateY(4px) }
+  @media (prefers-reduced-motion: reduce) { .downloads .box, .downloads .box a.dl::after { transition: none } }
   .box-spicy { background: var(--ry-spicy); color: #000; border-color: transparent }
   .box-spicy .box-muted { color: rgb(0 0 0 / .55) }
   .box-sky { background: var(--ry-skylight); color: #000 }
@@ -557,7 +563,7 @@
         <div class="box-bottom"><div class="box-row"><span class="cell-3 box-muted">Word, 140 × 297 mm on A4</span><span class="cell-3 box-muted">DOTX · 0.1 MB</span></div></div>
       </div>
       <div class="box box-pita">
-        <div class="box-top"><a class="dl" href="assets/downloads/A2Z_Faucet.zip" download>A2Z Faucet</a></div>
+        <div class="box-top"><a class="dl" href="assets/downloads/A2Z_Faucet.zip" download>Font – A2Z Faucet</a></div>
         <div class="box-bottom"><div class="box-row"><span class="cell-3 box-muted">OTF, WOFF and variable TTF, 15 files</span><span class="cell-3 box-muted">ZIP · 0.9 MB</span></div></div>
       </div>
     </div>
