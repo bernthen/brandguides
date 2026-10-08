@@ -34,6 +34,7 @@ jobs:
               printf '%s\n' '</body></html>'
             } > "_site/$dir/index.html"
           done
+          [ -f index.html ] && cp index.html _site/
           touch _site/.nojekyll
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
