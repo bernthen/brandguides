@@ -1,0 +1,13 @@
+Ry — fargepalett / colour palette
+Studio Blunt, 2024
+
+Navn         Hex       RGB             Papir (Gmund Colors Matt)
+Spicy        #F92E18   249 46 24       92
+Happy hour   #C590F8   197 144 248     44
+Pink gin     #FFD8D6   255 216 214     11
+Pita         #F2E9E4   242 233 228     49
+Skylight     #BFD9EF   191 217 239     62
+Black        #000000   0 0 0           —
+White        #FFFFFF   255 255 255     —
+
+Print on coloured paper with black ink. Hex values are for screens.

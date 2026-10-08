@@ -1,0 +1,402 @@
+/* ============================================================
+   STUDIO BLUNT — COMPONENTS
+   The text + media components from Figma:
+     "Text Components"  node 6:806
+     "Media Components" node 2:294
+
+   Every class below is named after its Figma component, so
+   "insert Text 6,6" / "change to Small Media - 3 Col" is
+   unambiguous. The catalog with copy-paste snippets is
+   kitchen-sink.html.
+
+   THE GRID THESE LIVE ON
+   All spans are authored in 12ths of the same fixed 12-column
+   master grid the nav already uses (see NAVIGATION.md — the
+   header grid never changes with bluntness). The Figma widths
+   at 1440 map exactly:
+       221px = 2 cols · 340px = 3 · 696px = 6 · 1054px = 9 ·
+       1407px = 12 · 1440px = full bleed
+   At level 3 the body shows 4 macro columns and each macro
+   column is exactly 3 master columns, so everything snaps to
+   both grids at once.
+
+   Desktop-first: only desktop components exist in Figma so far.
+   Below 720px everything stacks full-width as a provisional
+   fallback — replace when the mobile components are designed.
+   ============================================================ */
+
+:root {
+  --radius-media: 4px;                    /* media corner, from Figma */
+  --caption-gap: var(--space-2);          /* media → caption distance */
+  /* Figma's #d9d9d9 placeholder, made theme-aware: same optical
+     weight on paper, still visible on dark/violet/orange. */
+  --media-placeholder: var(--hairline);
+
+  /* Box components. 16px inner padding, and a 32px gap between the
+     social links. 32 is NOT on the base-8 space scale (8/16/24/48),
+     so it gets its own token rather than a wrong --space-N or a
+     magic number — promote it to tokens.css if it turns up again. */
+  --box-pad: var(--space-2);
+  --box-link-gap: 32px;
+}
+
+
+/* ------------------------------------------------------------
+   ROW — the master content grid. Media components sit inside
+   one; text components ARE one (they carry their own). Both use
+   identical tracks so a page is just stacked rows.
+   ------------------------------------------------------------ */
+
+.row {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  column-gap: var(--gutter);
+  row-gap: var(--space-4);
+}
+
+
+/* ------------------------------------------------------------
+   TEXT COMPONENTS  (Figma 6:806)
+   Markup grammar — two child classes only:
+     .c-label   the short left-hand label(s)
+     .c-body    the reading text (or a .c-list)
+   All type is the body role (24px); "Large header" is the only
+   exception (heading role, 64px).
+   ------------------------------------------------------------ */
+
+.text-6-6,
+.text-2-6,
+.text-3-3-6,
+.text-left,
+.text-right,
+.text-large {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  column-gap: var(--gutter);
+  row-gap: var(--space-2);
+  font-size: var(--fs-body);
+  line-height: 1.45;
+  font-weight: var(--weight-regular);
+}
+
+/* Inside a .row they occupy the full width, tracks realign 1:1 */
+.row > :is(.text-6-6, .text-2-6, .text-3-3-6, .text-left, .text-right, .text-large) {
+  grid-column: 1 / -1;
+}
+
+/* "Text 6,6" — label cols 1–6 · body cols 7–12 */
+.text-6-6 > .c-label { grid-column: 1 / span 6 }
+.text-6-6 > .c-body  { grid-column: 7 / span 6 }
+
+/* "Text list, 2, 6 (4 col offset)" — label col 5 span 2 · body cols 7–12 */
+.text-2-6 > .c-label { grid-column: 5 / span 2 }
+.text-2-6 > .c-body  { grid-column: 7 / span 6 }
+
+/* "Text 3,3,6" — two labels (1–3, 4–6) · body cols 7–12 */
+.text-3-3-6 > .c-label            { grid-column: 1 / span 3 }
+.text-3-3-6 > .c-label + .c-label { grid-column: 4 / span 3 }
+.text-3-3-6 > .c-body             { grid-column: 7 / span 6 }
+
+/* "Text left" / "Text Right" — one 6-col body block */
+.text-left  > .c-body { grid-column: 1 / span 6 }
+.text-right > .c-body { grid-column: 7 / span 6 }
+
+/* "Large header" — heading role across 9 cols */
+.text-large > .c-body {
+  grid-column: 1 / span 9;
+  font-size: min(var(--fs-heading), 8vw);   /* mirrors .t-heading */
+  line-height: 1.1;
+  letter-spacing: -0.01em;
+}
+
+/* Service-list style bodies: one item per line, no bullets */
+.c-list { list-style: none }
+
+
+/* ------------------------------------------------------------
+   MEDIA COMPONENTS  (Figma 2:294)
+   Markup grammar:
+     <figure class="media <size>">
+       <div class="media-frame"> <img|video|div class="slide"> </div>
+       <figcaption class="media-caption">Image text</figcaption>
+     </figure>
+   Sizes: .media-full-bleed · .media-12 · .media-6 · .media-3 ·
+          .media-2 · add .slide-show to a .media-6 for the
+          slideshow variant.
+   Large media are 16:9; small (3/2 col) are square, per Figma.
+   ------------------------------------------------------------ */
+
+.media { margin: 0; min-width: 0 }
+
+/* spans on the master grid */
+.media-12 { grid-column: 1 / -1 }
+.media-6  { grid-column: span 6 }
+.media-3  { grid-column: span 3 }
+.media-2  { grid-column: span 2 }
+
+/* "Large Media - Full bleed" — breaks out of .wrap to the viewport
+   edge, so it can be inserted anywhere without special parents. */
+.media-full-bleed {
+  width: auto;
+  margin-inline: calc(-1 * var(--margin));
+}
+.media-full-bleed > .media-frame {
+  border-radius: 0;
+  aspect-ratio: 1440 / 813;
+}
+
+.media-frame {
+  position: relative;
+  aspect-ratio: 16 / 9;
+  border-radius: var(--radius-media);
+  overflow: hidden;
+  background: var(--media-placeholder);
+}
+:is(.media-3, .media-2) > .media-frame { aspect-ratio: 1 / 1 }
+
+/* Every child of a frame fills it — that's also what lets the
+   slideshow stack its slides. */
+.media-frame > * {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+.media-frame > img,
+.media-frame > video { object-fit: cover; display: block }
+
+/* "Image text" caption — detail role, muted (eerie-black/50% in Figma) */
+.media-caption {
+  margin-top: var(--caption-gap);
+  font-size: var(--fs-detail);
+  line-height: 1.3;
+  letter-spacing: 0.01em;
+  color: var(--muted);
+}
+
+
+/* ------------------------------------------------------------
+   "Slide show" — a .media-6 with stacked slides and a meta row:
+   Client Name · Tag · Year · ← →. The meta row is its own
+   6-track grid nested inside the component's 6-col width, so
+   its items land on master columns (Figma x: 0 / 237 / 356).
+   Needs components.js for the arrows; without JS the first
+   slide simply shows.
+   ------------------------------------------------------------ */
+
+.slide-show .media-frame > * {
+  opacity: 0;
+  transition: opacity var(--dur-2) var(--ease);
+}
+.slide-show .media-frame > .is-active,
+.slide-show:not(.js) .media-frame > :first-child { opacity: 1 }
+
+.ss-meta {
+  margin-top: var(--caption-gap);
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  column-gap: var(--gutter);
+  font-size: var(--fs-detail);
+  line-height: 1.3;
+  letter-spacing: 0.01em;
+  color: var(--fg);
+}
+.ss-client { grid-column: 1 / span 2 }
+.ss-tag    { grid-column: 3 }
+.ss-year   { grid-column: 4 }
+.ss-nav    { grid-column: 6; justify-self: end; display: flex; gap: var(--space-2) }
+
+.ss-nav button {
+  border: 0;
+  background: none;
+  padding: 0;
+  font: inherit;
+  color: var(--fg);
+  cursor: pointer;
+  transition: opacity var(--dur-1) var(--ease);
+  font-family: 'Brockmann';
+}
+.ss-nav button:hover { opacity: 0.6 }
+
+
+/* ------------------------------------------------------------
+   BOX COMPONENTS  (Figma 6:806)
+   A square panel, 6 master columns wide, with content pinned to
+   the top and bottom edges and the middle deliberately empty —
+   the emptiness is the component.
+
+   Named after the spans they use, matching the rest of the sheet:
+     Box 6 / 3,3    .box-6-33   one full-width block, then pairs
+     Box 3,3 / 3,3  .box-33-33  label/content pairs throughout
+     Box 3 / 3,3    .box-3-33   one 3-col statement, then pairs
+
+   Markup grammar:
+     <div class="box box-6-33">
+       <div class="box-top">    …rows… </div>
+       <div class="box-bottom"> …rows… </div>
+     </div>
+   A row is `.box-row` (6 tracks); cells declare their own span
+   with .cell-6 / .cell-3 / .cell-2 / .cell-1. Figma's row names
+   map straight onto that: "2x3 col" = two .cell-3, and
+   "3 Col, 2 col, 1 col" = .cell-3 + .cell-2 + .cell-1.
+
+   THE INNER GRID IS 6 TRACKS OF THE BOX, NOT THE PAGE.
+   The box spans 6 master columns, and its 16px padding means the
+   inner tracks cannot also sit on the page's master lines — the
+   first cell starts at the padding (33px at 1440), not at master
+   column 1 (16px). Subdividing the padded inner width into 6
+   equal tracks puts cell 4 at 372.5px, which is where the Figma
+   has it (372) — so the two readings agree everywhere except the
+   1-col cell, which the Figma places at 609 (master column 6)
+   rather than 599. That 10px is the only discrepancy.
+   ------------------------------------------------------------ */
+
+.box {
+  grid-column: span 6;
+  aspect-ratio: 1 / 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;   /* this is the top/bottom pin */
+  gap: var(--space-3);
+  padding: var(--box-pad);
+  border-radius: var(--radius-media);
+  background: var(--surface);
+  color: var(--fg);
+  /* Every level of text inside a box is the detail role. */
+  font-size: var(--fs-detail);
+  line-height: 1.3;
+  letter-spacing: 0.01em;
+  /* The Figma box is eerie-black at every theme; this one follows
+     the theme instead. That needs a border: on the dark theme
+     --surface and --bg are BOTH --c-ink, so without an edge the
+     box would be perfectly invisible rather than merely subtle.
+     Delete this line if the box goes back to a fixed fill. */
+  border: var(--border-1) none var(--border);
+}
+
+/* Eerie black with white text at every theme — the Figma's fixed
+   treatment, as opposed to the theme-following default above. It needs
+   its own muted tier and border alpha: --muted is ink-at-50% on the
+   light themes, which is invisible on black, and --border likewise. */
+.box-ink {
+  background: var(--c-ink);
+  color: var(--c-white);
+  border-color: rgb(var(--rgb-white) / 0.15);
+}
+.box-ink .box-muted { color: rgb(var(--rgb-white) / 0.5) }
+
+/* Georges Claude green with ink text — the loud one. Same deal as
+   .box-ink: it needs its own muted tier and border, because --muted and
+   --border are ink-alpha on the light themes and paper-alpha on dark,
+   and only one of those reads on neon. */
+.box-accent {
+  background: var(--c-georges);
+  color: var(--c-ink);
+  border-color: rgb(var(--rgb-ink) / 0.15);
+}
+.box-accent .box-muted { color: rgb(var(--rgb-ink) / 0.5) }
+
+/* Both groups stack rows the same way. They're separate elements
+   rather than one flow because `justify-content: space-between` on
+   .box needs exactly two children to pin. */
+.box-top,
+.box-bottom { display: grid; row-gap: var(--space-5) }
+
+/* .box-6-33 / .box-33-33 / .box-3-33 carry no rules of their own —
+   the three variants differ only in how many cells each row holds,
+   which the markup already says. They exist so the Figma name maps
+   to a class you can search for, and so a variant can be given real
+   rules later without restructuring anything. */
+
+.box-row {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  /* --gutter is a constant 16px now (tokens.css §2b), so this is safe
+     at every level. It briefly wasn't: while the gutter ramped 0→32,
+     level 1 had a 0px gutter, which butted these cells straight into
+     each other on the one screen where this box IS the whole page.
+     At 16 the second cell lands at 372.5px inside a 695px box, which
+     is where the Figma has it (373). */
+  column-gap: var(--gutter);
+}
+
+.cell-6 { grid-column: span 6 }
+.cell-3 { grid-column: span 3 }
+.cell-2 { grid-column: span 2 }
+.cell-1 { grid-column: span 1 }
+
+/* A cell pinned to columns 4–6, for rows whose left half is
+   deliberately empty (the level-1 box: nothing at 1–3 because the nav
+   wordmark sits there, lead at 4–6).
+
+   Both edges in ONE declaration, on purpose. Two earlier attempts at a
+   composable `.cell-3 + start-at-4` helper both silently collapsed the
+   cell to a single column:
+
+   1. Named `.at-4`, it lost outright — index.html owns .at-1/.at-3/
+      .at-4/.at-7/.at-10/.at-11/.at-12 for nav placement, and its inline
+      <style> loads after this file, so `.at-4 { grid-column: 4 }` won.
+   2. Renamed and using `grid-column-start: 4`, it still broke: the
+      shorthand `grid-column: span 3` sets the START edge to `span 3`
+      and leaves the end `auto`, so overriding the start edge throws the
+      span away rather than adding to it.
+
+   Both failures looked identical on the site and invisible in the
+   kitchen sink, which has no nav classes. Keep box classes inside the
+   .cell-* namespace and set both edges at once. */
+.cell-4-6 { grid-column: 4 / span 3 }
+
+/* Figma "Text (aligned top) + Links aligned bottom" — a cell that
+   pins its own two children the way the box pins its groups. */
+.cell-split { display: flex; flex-direction: column; justify-content: space-between }
+
+/* The one place a box uses the body role: the opening statement of
+   .box-6-33 and .box-3-33 (24px in Figma). Everything else is detail. */
+.box-lead {
+  font-size: var(--fs-body);
+  line-height: 1.45;
+  letter-spacing: normal;
+}
+
+/* Secondary lines — location, phone, email, role, the services list.
+   Figma has these at 50–60% white; --muted is the theme-aware 50%. */
+.box-muted { color: var(--muted) }
+
+.box-list { list-style: none }
+.box-list.is-bulleted { list-style: disc; padding-left: 1.2em }
+
+/* Social pair, 32px apart, left-aligned in its cell in every box. */
+.box-links { display: flex; gap: var(--box-link-gap) }
+
+/* Inline links keep the underline + ↗ from the Figma. */
+.box a {
+  color: inherit;
+  text-decoration: underline;
+  text-underline-offset: 0.15em;
+  transition: opacity var(--dur-1) var(--ease);
+}
+.box a:hover { opacity: 0.6 }
+.box-links a { text-decoration: none }
+
+.box .est-sq { font-size: 0.85em; vertical-align: 0.1em; margin-right: 0.5em }
+
+
+/* ------------------------------------------------------------
+   MOBILE (provisional — no mobile components designed yet).
+   Same breakpoint as tokens.css: everything stacks full-width,
+   labels above bodies, media keeps its aspect.
+   ------------------------------------------------------------ */
+
+@media (max-width: 720px) {
+  :is(.text-6-6, .text-2-6, .text-3-3-6, .text-left, .text-right, .text-large) > *,
+  .row > .media,
+  .media-6, .media-3, .media-2 {
+    grid-column: 1 / -1;
+  }
+
+  /* A square can't hold this much text at phone width — let the box
+     grow instead, and stack the paired cells. */
+  .box { aspect-ratio: auto; grid-column: 1 / -1 }
+  .box-row > :is(.cell-6, .cell-3, .cell-2, .cell-1) { grid-column: 1 / -1 }
+  .box-row { row-gap: var(--space-1) }
+}

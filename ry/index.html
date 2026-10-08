@@ -1,0 +1,720 @@
+<title>Ry brand guide</title>
+<!-- No <html>/<head>/<body> of its own: the claude.ai artifact host wraps
+     the page in its skeleton, and browsers build the same tree when the
+     file is opened off disk. The viewer sets data-theme itself (light /
+     dark / unset = follow the system), so only bluntness is set here. -->
+<script>document.documentElement.lang = "en"; document.documentElement.dataset.bluntness = "3";</script>
+<link rel="stylesheet" href="system/tokens.css">
+<link rel="stylesheet" href="system/components.css">
+<style>
+  /* ============================================================
+     RY — BRAND GUIDE
+     A one-pager on the Studio Blunt system: the chrome (nav, grid,
+     text/media/box components, Brockmann) is ours; everything Ry
+     owns (colour, A2Z Faucet, the drawings) is shown as content.
+
+     To make the next client's guide: copy this folder, swap the
+     --ry-* tokens, the @font-face block and assets/. system/ is a
+     copy of Website/design system/{tokens,components}.css + fonts,
+     kept inside the folder so the guide publishes and travels as one unit.
+     ============================================================ */
+
+  /* The client's typeface. Studio Blunt's licence covers any use, web included. */
+  @font-face { font-family: "A2Z Faucet"; src: url("assets/fonts/A2Z-Faucet-Thin.woff") format("woff");    font-weight: 100; font-display: swap }
+  @font-face { font-family: "A2Z Faucet"; src: url("assets/fonts/A2Z-Faucet-Light.woff") format("woff");   font-weight: 300; font-display: swap }
+  @font-face { font-family: "A2Z Faucet"; src: url("assets/fonts/A2Z-Faucet-Regular.woff") format("woff"); font-weight: 400; font-display: swap }
+  @font-face { font-family: "A2Z Faucet"; src: url("assets/fonts/A2Z-Faucet-Medium.woff") format("woff");  font-weight: 500; font-display: swap }
+  @font-face { font-family: "A2Z Faucet"; src: url("assets/fonts/A2Z-Faucet-Bold.woff") format("woff");    font-weight: 700; font-display: swap }
+  @font-face { font-family: "A2Z Faucet"; src: url("assets/fonts/A2Z-Faucet-Black.woff") format("woff");   font-weight: 900; font-display: swap }
+  @font-face { font-family: "A2Z Faucet"; src: url("assets/fonts/A2Z-Faucet-Ultra.woff") format("woff");   font-weight: 950; font-display: swap }
+  /* The variable cut drives the animated Aa (weight 100–950). */
+  @font-face { font-family: "A2Z Faucet VAR"; src: url("assets/fonts/A2Z-Faucet-VAR.ttf") format("truetype"); font-weight: 100 950; font-display: swap }
+
+  :root {
+    /* Ry palette — names and values from the original Brandpad guide */
+    --ry-black:     #000000;
+    --ry-white:     #FFFFFF;
+    --ry-happyhour: #C590F8;
+    --ry-pinkgin:   #FFD8D6;
+    --ry-pita:      #F2E9E4;
+    --ry-skylight:  #BFD9EF;
+    --ry-spicy:     #F92E18;
+
+    --font-ry: "A2Z Faucet", var(--font-sans);
+    --nav-h: 46px;
+  }
+
+  /* Dark mode with no data-theme set: the design system's own dark
+     theme (tokens.css [data-theme="dark"]), applied from the OS setting.
+     Ry's palette stays fixed in both — it's the content being shown. */
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: var(--c-ink); --fg: var(--c-paper);
+      --surface: var(--c-ink); --surface-2: var(--c-ink);
+      --border:   rgb(var(--rgb-paper) / 0.15);
+      --hairline: rgb(var(--rgb-paper) / 0.10);
+      --muted:    rgb(var(--rgb-paper) / 0.50);
+      --subtle:   rgb(var(--rgb-paper) / 0.25);
+      --link: var(--c-paper); --link-hover: var(--c-georges);
+      --focus: var(--c-georges);
+      --selection: rgb(var(--rgb-georges) / 0.25);
+      --btn-bg: rgb(var(--rgb-paper) / 0.25);
+      color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"] { color-scheme: dark }
+
+  html { scroll-behavior: smooth; scroll-padding-top: var(--nav-h) }
+  @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto } }
+  img { display: block; max-width: 100% }
+  a { color: inherit }
+
+  /* ---------- NAV — the site's header, unchanged in spirit:
+     12 master columns, no bar, white text blended by exclusion so it
+     reads over photos and paper alike. ---------- */
+  .site-head {
+    position: fixed; inset: 0 0 auto 0; z-index: var(--z-chrome);
+    display: grid; grid-template-columns: repeat(12, minmax(0, 1fr));
+    column-gap: var(--gutter); align-items: baseline;
+    padding: var(--space-2) var(--margin);
+    font-size: var(--fs-detail); line-height: 1;
+    mix-blend-mode: exclusion; isolation: isolate;
+    pointer-events: none;
+  }
+  .site-head > * { justify-self: start; white-space: nowrap; min-width: 0; pointer-events: auto; color: var(--c-white); text-decoration: none }
+  .at-1  { grid-column: 1 / 3 }
+  .at-3  { grid-column: 3 / 5 }
+  .at-7  { grid-column: 7 / 12 }
+  .at-12 { grid-column: 12; justify-self: end; align-self: center }
+  .menu { display: flex; gap: var(--space-3); align-items: baseline }
+  .menu a { color: var(--c-white); text-decoration: none; transition: opacity var(--dur-1) var(--ease) }
+  .menu a:hover, .menu a[aria-current] { opacity: .6 }
+  .muted-w { color: var(--nav-muted) }
+  .mark { height: 16px; aspect-ratio: 148.31 / 106.14; display: inline-block }
+  .mark svg { display: block; width: 100%; height: 100% }
+  .mark path { fill: var(--c-white) }
+
+  /* ---------- PAGE RHYTHM ---------- */
+  main > section { padding-block: var(--space-5) 0 }
+  .stack { display: grid; row-gap: var(--space-4) }
+  .stack-sm { display: grid; row-gap: var(--space-2) }
+  .sec-head { padding-top: var(--space-2); border-top: var(--border-1) solid var(--border) }
+  .sec-head .c-label:first-child { color: var(--muted) }
+  .c-body p + p { margin-top: 0.8em }
+  .note { font-size: var(--fs-detail); line-height: 1.3; letter-spacing: .01em; color: var(--muted) }
+
+  .intro { padding-top: calc(var(--nav-h) + var(--space-7)) }
+
+  /* ---------- LOGO ---------- */
+  .logo-tile { display: grid; place-items: center }
+  /* components.css stretches every frame child to inset:0 (for photos);
+     the logo and clear-space art sit centred at their own size instead. */
+  .logo-tile > img { position: static; width: 46%; height: auto; image-rendering: pixelated }
+  .clear-tile { display: grid; place-items: center }
+  .clear-tile > img { position: static; width: 80%; height: auto }
+
+  /* ---------- COLOUR ---------- */
+  /* A <button> needs the page font, but `font: inherit` would also inherit
+     the 24px body size over .box's 14px — so only the family is inherited. */
+  .swatch { grid-column: span 3; cursor: copy; text-align: left; font-family: inherit; appearance: none;
+            transition: transform var(--dur-1) var(--ease) }
+  .swatch:active { transform: scale(.985) }
+  .swatch .box-lead { font-family: inherit; font-size: var(--fs-detail); line-height: 1.3; letter-spacing: .01em }
+  .swatch.on-dark { color: var(--c-white) }
+  .swatch.on-dark .box-muted { color: rgb(255 255 255 / .6) }
+  .swatch .box-muted { color: rgb(0 0 0 / .55) }
+  .swatch .copied { opacity: 0; transition: opacity var(--dur-1) var(--ease) }
+  .swatch.is-copied .copied { opacity: 1 }
+  .swatch-white { border: var(--border-1) solid var(--border) }
+  .pairs { display: grid; grid-template-columns: repeat(6, minmax(0,1fr)); gap: var(--gutter) }
+  .pair { aspect-ratio: 1; border-radius: var(--radius-media); display: grid; place-items: center;
+          font-family: var(--font-ry); font-size: clamp(18px, 2.2vw, 32px); text-transform: uppercase; line-height: 1;
+          border: var(--border-1) solid var(--hairline) }
+
+  /* ---------- TYPE ---------- */
+  .ry-type { font-family: var(--font-ry); text-transform: uppercase }
+  .specimen { display: grid; grid-template-columns: repeat(12, minmax(0,1fr)); column-gap: var(--gutter); align-items: end }
+  /* The big Aa breathes through the variable font's whole weight axis. */
+  /* The big Aa rides the variable font's weight axis back and forth at a
+     constant speed (linear, alternating — no easing, so it never pauses at
+     either end), the a a quarter-cycle behind the A so the weight rolls
+     across. Animating the wght axis keeps it continuous. */
+  .specimen .aa { grid-column: 1 / span 6; font-family: "A2Z Faucet VAR", var(--font-ry); font-size: min(var(--fs-display) * 2.4, 30vw); line-height: .8; letter-spacing: -0.02em }
+  .specimen .aa span { display: inline-block; animation: aa-wave 2.6s linear infinite alternate }
+  .specimen .aa span:first-child { animation-delay: -0.65s }
+  @keyframes aa-wave {
+    from { font-variation-settings: "wght" 100 }
+    to   { font-variation-settings: "wght" 950 }
+  }
+  @media (prefers-reduced-motion: reduce) { .specimen .aa span { animation: none; font-variation-settings: "wght" 400 } }
+  .specimen .glyphs { grid-column: 7 / span 6; font-family: var(--font-ry); font-size: var(--fs-body); line-height: 1.3; word-break: break-all }
+  .weights { list-style: none; border-top: var(--border-1) solid var(--hairline) }
+  .weights li { display: grid; grid-template-columns: repeat(12, minmax(0,1fr)); column-gap: var(--gutter);
+                align-items: baseline; padding-block: var(--space-1); border-bottom: var(--border-1) solid var(--hairline) }
+  .weights .w-name { grid-column: 1 / span 2; font-size: var(--fs-detail); color: var(--muted) }
+  .weights .w-sample { grid-column: 3 / -1; font-family: var(--font-ry); font-size: clamp(28px, 4.4vw, 64px); line-height: 1.1; text-transform: uppercase; white-space: nowrap; overflow: hidden; text-overflow: ellipsis }
+  .weights li.is-main .w-name { color: var(--fg) }
+  /* Plain like a page in a document: no fill, a blinking cursor at the
+     end of the text until you click in (then the real caret takes over). */
+  .tester { font-family: "A2Z Faucet VAR", var(--font-ry); font-variation-settings: "wght" var(--wght, 400);
+            font-size: clamp(28px, 4.4vw, 64px); line-height: 1.05; text-transform: uppercase;
+            padding-block: var(--space-2); color: var(--fg); caret-color: var(--ry-spicy);
+            border-block: var(--border-1) solid var(--hairline); outline: none; min-height: 3em }
+  .tester:not(:focus)::after { content: ""; display: inline-block; width: 2px; height: .9em; margin-left: .06em;
+                               vertical-align: -.08em; background: var(--ry-spicy); animation: caret-blink 1.06s steps(1) infinite }
+  @keyframes caret-blink { 50% { opacity: 0 } }
+  .tester-ctl { display: flex; flex-wrap: wrap; gap: var(--space-2); align-items: center; font-size: var(--fs-detail); color: var(--muted) }
+  .tester-ctl input { flex: 0 1 280px; accent-color: var(--ry-spicy) }
+  .tester-ctl output { color: var(--fg); font-variant-numeric: tabular-nums; min-width: 3ch }
+
+  /* ---------- ILLUSTRATION ---------- */
+  .chips { display: flex; flex-wrap: wrap; gap: var(--space-1); align-items: center; font-size: var(--fs-detail) }
+  .chips span { color: var(--muted); margin-right: var(--space-1) }
+  .chip { width: 28px; height: 28px; border-radius: 50%; border: var(--border-1) solid var(--border); cursor: pointer; padding: 0 }
+  .chip[aria-pressed="true"] { outline: 2px solid var(--fg); outline-offset: 2px }
+  .ill-grid { display: grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap: var(--gutter) }
+  .ill { aspect-ratio: 1; border-radius: var(--radius-media); background: var(--ill-bg, #fff); position: relative; overflow: hidden;
+         transition: background-color var(--dur-2) var(--ease) }
+  .ill img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; image-rendering: pixelated }
+  .ill figcaption { position: absolute; left: 12px; bottom: 10px; font-size: var(--fs-detail); color: var(--ill-fg, #000); opacity: .6 }
+  .ill a { position: absolute; inset: 0; display: flex; align-items: flex-end; justify-content: flex-end; padding: 8px 12px;
+           font-size: var(--fs-detail); color: var(--ill-fg, #000); text-decoration: none; opacity: .6; transition: opacity var(--dur-1) var(--ease) }
+  .ill a:hover, .ill a:focus-visible { opacity: 1 }
+  .steps { list-style: none; counter-reset: s; display: grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap: var(--gutter) }
+  .steps li { counter-increment: s; font-size: var(--fs-detail); line-height: 1.3; padding-top: var(--space-1); border-top: var(--border-1) solid var(--border) }
+  .steps li::before { content: counter(s, decimal-leading-zero); display: block; color: var(--muted); margin-bottom: var(--space-3) }
+  .steps b { display: block; font-weight: var(--weight-regular); margin-bottom: var(--space-1) }
+
+  .contain .media-frame > img { object-fit: contain }
+  .on-pita .media-frame { background: var(--ry-pita) }
+  .on-black .media-frame { background: #000 }
+  .on-white .media-frame { background: #fff; box-shadow: inset 0 0 0 1px var(--hairline) }
+  /* Menu sheets sit small and centred on white, like paper on a table. */
+  .sheet .media-frame { background: #fff; box-shadow: inset 0 0 0 1px var(--hairline) }
+  .sheet .media-frame > img { inset: 12%; width: 76%; height: 76%; object-fit: contain }
+
+  /* ---------- SMALL TYPE ----------
+     Everything reads at the menu's size (the detail role, 14px) except
+     the intro paragraph of each section. */
+  .sec-head > .c-label, .text-6-6 > .c-label { font-size: var(--fs-detail); line-height: 1.3; letter-spacing: .01em }
+
+  /* ---------- SECTION DOWNLOADS ---------- */
+  .dl-row { display: flex; flex-wrap: wrap; gap: var(--space-1); align-items: center; font-size: var(--fs-detail); line-height: 1.3 }
+  .dl-row > span { color: var(--muted); margin-right: var(--space-1) }
+  .dl-btn { display: inline-flex; gap: 6px; align-items: center; padding: 6px 12px; border: var(--border-1) solid var(--border);
+            border-radius: var(--radius-control); color: var(--fg); text-decoration: none; transition: background-color var(--dur-1) var(--ease) }
+  .dl-btn::before { content: "↓" }
+  .dl-btn:hover { background: var(--hairline) }
+  .dl-btn[aria-disabled="true"] { color: var(--muted); pointer-events: none }
+  .dl-btn[aria-disabled="true"]::before { content: none }
+
+  /* ---------- DOWNLOADS ---------- */
+  .downloads .box { aspect-ratio: auto; min-height: 340px; grid-column: span 3 }
+  .downloads .box a.dl { text-decoration: none }
+  .downloads .box a.dl::after { content: " ↓" }
+  .downloads .box a.dl:hover { opacity: .6 }
+  .box-spicy { background: var(--ry-spicy); color: #000; border-color: transparent }
+  .box-spicy .box-muted { color: rgb(0 0 0 / .55) }
+  .box-sky { background: var(--ry-skylight); color: #000 }
+  .box-sky .box-muted, .box-pita .box-muted { color: rgb(0 0 0 / .55) }
+  .box-pita { background: var(--ry-pita); color: #000 }
+
+  footer { padding: var(--space-6) 0 var(--space-3) }
+  footer .row { font-size: var(--fs-detail); line-height: 1.3 }
+  footer .row > * { grid-column: span 3 }
+
+  .toast { position: fixed; left: 50%; bottom: var(--space-3); transform: translate(-50%, 20px); opacity: 0;
+           background: var(--c-ink); color: var(--c-white); font-size: var(--fs-detail); padding: 10px 16px; border-radius: var(--radius-control);
+           transition: opacity var(--dur-1) var(--ease), transform var(--dur-1) var(--ease); z-index: 200; pointer-events: none }
+  .toast.show { opacity: 1; transform: translate(-50%, 0) }
+
+  @media (max-width: 960px) {
+    .swatch, .downloads .box { grid-column: span 6 }
+    .pairs { grid-template-columns: repeat(3, minmax(0,1fr)) }
+    .steps { grid-template-columns: repeat(2, minmax(0,1fr)) }
+    .at-3 { display: none }
+  }
+  @media (max-width: 720px) {
+    :root { --fs-body: 18px }
+    main > section { padding-block: var(--space-4) 0 }
+    .site-head .menu { display: none }
+    .at-1 { grid-column: 1 / 10 }
+    .swatch, .downloads .box { grid-column: 1 / -1; aspect-ratio: auto; min-height: 220px }
+    .ill-grid { grid-template-columns: repeat(2, minmax(0,1fr)) }
+    .specimen .aa, .specimen .glyphs { grid-column: 1 / -1 }
+    .specimen .glyphs { margin-top: var(--space-3) }
+    .weights .w-name { grid-column: 1 / -1 }
+    .weights .w-sample { grid-column: 1 / -1 }
+    .steps { grid-template-columns: 1fr }
+    footer .row > * { grid-column: 1 / -1 }
+    .text-6-6 > .c-label:first-child, .text-3-3-6 > .c-label:first-child { margin-bottom: -8px }
+  }
+</style>
+
+<header class="site-head">
+  <a class="at-1" href="#top">Ry — Brand guide</a>
+  <span class="at-3 muted-w">Version 1.0 · 2026</span>
+  <nav class="menu at-7" aria-label="Sections">
+    <a href="#logo">Logo</a>
+    <a href="#colour">Colour</a>
+    <a href="#type">Type</a>
+    <a href="#illustration">Illustration</a>
+    <a href="#menus">Menus</a>
+    <a href="#downloads">Downloads</a>
+  </nav>
+  <a class="mark at-12" href="https://studioblunt.com" aria-label="Studio Blunt">
+    <svg viewBox="0 0 148.31 106.14" aria-hidden="true">
+      <path d="m132.55,4.59c13.21,15.75,11.16,39.22-4.59,52.43-15.75,13.21-39.22,11.16-52.43-4.59L132.55,4.59Z"/>
+      <path d="m59.74,41.81c13.21,15.75,11.16,39.22-4.59,52.43-15.75,13.21-39.22,11.16-52.43-4.59l57.02-47.85Z"/>
+      <path d="m24.34,71.5C6.91,60.61,1.61,37.65,12.5,20.21,23.4,2.78,46.36-2.52,63.79,8.37l-39.45,63.12Z"/>
+      <path d="m145.59,65.72c0,20.55-16.66,37.22-37.22,37.22s-37.22-16.66-37.22-37.22h74.44Z"/>
+    </svg>
+  </a>
+</header>
+
+<main id="top" class="wrap">
+
+  <!-- ─────────── INTRO ─────────── -->
+  <section class="stack intro">
+    <div class="text-6-6">
+      <h1 class="c-label">Ry<br><span style="color:var(--muted)">Mat, drikke, kultur, events</span></h1>
+      <div class="c-body">
+        <p>Ry is an unpretentious place for food, drinks, culture and events in the old industrial halls of Stavanger Øst. Meze from local produce, a stone oven, a concert or a quiz. Or just leave a drawing behind.</p>
+        <p>The identity is built on drawings: naive, funny, a bit pixelated. It's deliberately simple, so the people at Ry can make their own menus and posters with coloured paper, a template and an ordinary laser printer. This page is everything you need to do that.</p>
+      </div>
+    </div>
+    <figure class="media media-12">
+      <div class="media-frame"><img src="assets/img/lightbox.jpg" alt="Ry's red light box sign glowing at night, with a pixelated pointing hand"></div>
+    </figure>
+  </section>
+
+  <!-- ─────────── 01 LOGO ─────────── -->
+  <section id="logo" class="stack">
+    <div class="text-3-3-6 sec-head">
+      <h2 class="c-label">01</h2>
+      <h2 class="c-label">Logo</h2>
+      <div class="c-body">
+        <p>The logo is a drawing, not a font. It also moves: the animated version can be used anywhere on screen. Use it in black or white only, always from the files below. Never redraw it, stretch it or add effects.</p>
+      </div>
+    </div>
+
+    <div class="row">
+      <figure class="media media-6">
+        <div class="media-frame logo-tile" style="background:var(--ry-pita);color:#000"><img src="assets/logo/ry-logo-animated-black.gif" alt="Animated Ry logo in black"></div>
+        <figcaption class="media-caption">Positive. Black on light colours and paper. Animated GIF, also available as still SVG, PNG and PDF.</figcaption>
+      </figure>
+      <figure class="media media-6">
+        <div class="media-frame logo-tile" style="background:#000;color:#fff"><img src="assets/logo/ry-logo-animated-white.gif" alt="Animated Ry logo in white"></div>
+        <figcaption class="media-caption">Negative. White on black, Spicy and photos.</figcaption>
+      </figure>
+      <figure class="media media-3">
+        <div class="media-frame clear-tile" style="background:var(--ry-white);border:1px solid var(--hairline)"><img src="assets/logo/clearspace-pos.png" alt="Ry logo with clear space marked by the eye from the R in each corner"></div>
+        <figcaption class="media-caption">Clear space: the eye from the R on every side.</figcaption>
+      </figure>
+      <figure class="media media-3">
+        <div class="media-frame clear-tile" style="background:#000"><img src="assets/logo/clearspace-neg.png" alt="Negative Ry logo with clear space marked"></div>
+        <figcaption class="media-caption">Same rule on dark backgrounds.</figcaption>
+      </figure>
+      <figure class="media media-3">
+        <div class="media-frame"><img src="assets/img/door-close.jpg" alt="White Ry logo on the glass front door" loading="lazy"></div>
+        <figcaption class="media-caption">Front door, white foil on glass.</figcaption>
+      </figure>
+      <figure class="media media-3">
+        <div class="media-frame"><img src="assets/img/coasters.jpg" alt="Coasters with a red illustration and the words Mat, Drikke, Kultur, Events" loading="lazy"></div>
+        <figcaption class="media-caption">The logo is allowed to evolve. Readability varies on purpose.</figcaption>
+      </figure>
+    </div>
+
+    <div class="dl-row">
+      <span>Download logo</span>
+      <a class="dl-btn" href="assets/downloads/Ry_Logo_SVG.zip" download>SVG</a>
+      <a class="dl-btn" href="assets/downloads/Ry_Logo_PNG.zip" download>PNG</a>
+      <a class="dl-btn" href="assets/downloads/Ry_Logo_PDF.zip" download>PDF, RGB and CMYK</a>
+      <a class="dl-btn" href="assets/downloads/Ry_Logo_GIF.zip" download>Animated GIF</a>
+      <a class="dl-btn" href="assets/downloads/Ry_Logopakke.zip" download>Everything</a>
+    </div>
+  </section>
+
+  <!-- ─────────── 02 COLOUR ─────────── -->
+  <section id="colour" class="stack">
+    <div class="text-3-3-6 sec-head">
+      <h2 class="c-label">02</h2>
+      <h2 class="c-label">Colour</h2>
+      <div class="c-body">
+        <p>Bold colour that contrasts with the calm, polished interior. Pick one paper colour and one ink colour per piece. In print the colour comes from the paper itself (Gmund Colors Matt), so a black laser printer is all you need.</p>
+        <p class="note" style="margin-top:var(--space-2)">Click a colour to copy its hex code.</p>
+      </div>
+    </div>
+
+    <div class="row" id="swatches" style="row-gap:var(--gutter)"></div>
+
+    <div class="stack-sm">
+      <p class="note">Combinations that work</p>
+      <div class="pairs">
+        <div class="pair" style="background:var(--ry-skylight);color:var(--ry-spicy)">Mat</div>
+        <div class="pair" style="background:var(--ry-happyhour);color:#000">Drikke</div>
+        <div class="pair" style="background:var(--ry-pinkgin);color:#000">Kultur</div>
+        <div class="pair" style="background:var(--ry-pita);color:var(--ry-spicy)">Events</div>
+        <div class="pair" style="background:var(--ry-spicy);color:#000">Meze</div>
+        <div class="pair" style="background:#000;color:#fff">Ry</div>
+      </div>
+    </div>
+
+    <div class="dl-row">
+      <span>Download colours</span>
+      <a class="dl-btn" href="assets/downloads/Ry_Farger.txt" download>Colour codes, TXT</a>
+    </div>
+  </section>
+
+  <!-- ─────────── 03 TYPE ─────────── -->
+  <section id="type" class="stack">
+    <div class="text-3-3-6 sec-head">
+      <h2 class="c-label">03</h2>
+      <h2 class="c-label">Typography</h2>
+      <div class="c-body">
+        <p>One typeface: <span class="ry-type">A2Z Faucet</span>. Ry sets it in capitals, mostly in Regular. Hierarchy comes from size and placement, not from mixing weights. Let the drawings be the loud part.</p>
+        <p class="note" style="margin-top:var(--space-2)">Install the OTF files on the computers that make menus and posters. The WOFF files are for the website.</p>
+      </div>
+    </div>
+
+    <div class="specimen">
+      <div class="aa" aria-label="Aa"><span aria-hidden="true">A</span><span aria-hidden="true">a</span></div>
+      <div class="glyphs">ABCDEFGHIJKLMNOPQRSTUVWXYZÆØÅ<br>abcdefghijklmnopqrstuvwxyzæøå<br>0123456789 ,.:;–!?&amp;@ kr 95,-</div>
+    </div>
+
+    <div class="stack-sm">
+      <div class="tester-ctl"><span>Try it. Type anything.</span><label for="wght" style="margin-left:auto">Weight</label><input id="wght" type="range" min="100" max="950" step="1" value="400"><output id="wghtOut" for="wght">400</output></div>
+      <div class="tester" contenteditable="true" spellcheck="false" aria-label="Type tester">Ry har åpnet! Besøk oss i Ryfylkegata 11.</div>
+    </div>
+
+    <ul class="weights">
+      <li><span class="w-name">Thin</span><span class="w-sample" style="font-weight:100">Mat, drikke, kultur</span></li>
+      <li><span class="w-name">Light</span><span class="w-sample" style="font-weight:300">Mat, drikke, kultur</span></li>
+      <li class="is-main"><span class="w-name">Regular — use this</span><span class="w-sample" style="font-weight:400">Mat, drikke, kultur</span></li>
+      <li><span class="w-name">Medium</span><span class="w-sample" style="font-weight:500">Mat, drikke, kultur</span></li>
+      <li><span class="w-name">Bold</span><span class="w-sample" style="font-weight:700">Mat, drikke, kultur</span></li>
+      <li><span class="w-name">Black</span><span class="w-sample" style="font-weight:900">Mat, drikke, kultur</span></li>
+      <li><span class="w-name">Ultra</span><span class="w-sample" style="font-weight:950">Mat, drikke, kultur</span></li>
+    </ul>
+
+    <div class="row">
+      <figure class="media media-6">
+        <div class="media-frame"><img src="assets/img/poster-violet.jpg" alt="Violet poster: Ry har åpnet, set in capitals with a pixelated drawing" loading="lazy"></div>
+        <figcaption class="media-caption">Capitals, Regular, one size for the message.</figcaption>
+      </figure>
+      <figure class="media media-6">
+        <div class="media-frame"><img src="assets/img/tshirt.jpg" alt="White T-shirt with red illustration and Mat, Kultur, Drikke, Events" loading="lazy"></div>
+        <figcaption class="media-caption">The four words sit in the corners: Mat, Drikke, Kultur, Events.</figcaption>
+      </figure>
+    </div>
+
+    <div class="dl-row">
+      <span>Download typeface</span>
+      <a class="dl-btn" href="assets/downloads/A2Z_Faucet.zip" download>A2Z Faucet: OTF, WOFF and variable</a>
+    </div>
+  </section>
+
+  <!-- ─────────── 04 ILLUSTRATION ─────────── -->
+  <section id="illustration" class="stack">
+    <div class="text-3-3-6 sec-head">
+      <h2 class="c-label">04</h2>
+      <h2 class="c-label">Illustration</h2>
+      <div class="c-body">
+        <p>The drawings are the heart of Ry. Naive, a little silly, sketched by hand and then pixelated so they belong together. Everyone is invited to add new ones. The pixel effect, the type and the grid are what keep it all one family.</p>
+      </div>
+    </div>
+
+    <div class="chips" role="group" aria-label="Illustration colours">
+      <span>Ink</span>
+      <button class="chip" data-ink="black" data-hex="#000000" style="background:#000" aria-pressed="true" aria-label="Black ink"></button>
+      <button class="chip" data-ink="spicy" data-hex="#F92E18" style="background:#F92E18" aria-pressed="false" aria-label="Spicy ink"></button>
+      <button class="chip" data-ink="happyhour" data-hex="#C590F8" style="background:#C590F8" aria-pressed="false" aria-label="Happy hour ink"></button>
+      <button class="chip" data-ink="pinkgin" data-hex="#FFD8D6" style="background:#FFD8D6" aria-pressed="false" aria-label="Pink gin ink"></button>
+      <button class="chip" data-ink="white" data-hex="#FFFFFF" style="background:#fff" aria-pressed="false" aria-label="White ink"></button>
+    </div>
+
+    <div class="ill-grid" id="ills"></div>
+
+    <div class="row">
+      <figure class="media media-12 contain">
+        <div class="media-frame" style="background:#fff;box-shadow:inset 0 0 0 1px var(--hairline)"><img src="assets/anim/block-dance-wide.gif" alt="Animated red character dancing, then growing until it fills the frame" loading="lazy" style="image-rendering:pixelated"></div>
+        <figcaption class="media-caption">From the website. The dancer grows until Spicy fills the screen.</figcaption>
+      </figure>
+      <figure class="media media-6 contain">
+        <div class="media-frame" style="background:#fff;box-shadow:inset 0 0 0 1px var(--hairline)"><img src="assets/anim/block-dance.gif" alt="Animated black character doing a handstand" loading="lazy" style="image-rendering:pixelated"></div>
+        <figcaption class="media-caption">Movement is short and jerky: a few frames, never smooth tweening.</figcaption>
+      </figure>
+      <figure class="media media-6 contain">
+        <div class="media-frame" style="background:#fff;box-shadow:inset 0 0 0 1px var(--hairline)"><img src="assets/anim/web-loop.gif" alt="Animated loop that draws one illustration after another" loading="lazy" style="image-rendering:pixelated"></div>
+        <figcaption class="media-caption">The website loop draws the illustrations one after another.</figcaption>
+      </figure>
+    </div>
+
+    <div class="stack-sm">
+      <p class="note">Adding a drawing of your own</p>
+      <ol class="steps">
+        <li><b>Draw</b>Black marker on white paper. Thick lines, simple shapes. Funny beats pretty.</li>
+        <li><b>Scan</b>Scan or photograph it flat, in daylight, straight from above.</li>
+        <li><b>Pixelate</b>Run it through the same pixel effect as the others. Studio Blunt can help.</li>
+        <li><b>Use one colour</b>One ink from the palette on one of the paper colours. Never mix inks.</li>
+      </ol>
+    </div>
+
+    <div class="dl-row">
+      <span>Download illustrations</span>
+      <a class="dl-btn" href="assets/downloads/Ry_Illustrasjoner.zip" download>All drawings, every colour</a>
+      <span style="margin-left:var(--space-2)">Or click a drawing above for that one, in the colour you picked.</span>
+    </div>
+  </section>
+
+  <!-- ─────────── 05 MENUS ─────────── -->
+  <section id="menus" class="stack">
+    <div class="text-3-3-6 sec-head">
+      <h2 class="c-label">05</h2>
+      <h2 class="c-label">Menus and print</h2>
+      <div class="c-body">
+        <p>Menus change often, so they're made to be made at Ry. Open the template, change the text, print in black on coloured paper. Header line on top, dishes in a clear list with prices on the right, one drawing in a corner.</p>
+        
+      </div>
+    </div>
+
+    <div class="row">
+      <figure class="media media-12 on-pita contain">
+        <div class="media-frame"><img src="assets/img/menu-template.jpg" alt="Two menu pages side by side showing the template layout with a fork and knife drawing" loading="lazy"></div>
+        <figcaption class="media-caption">The template. Small capitals, generous margins, the drawing anchors the bottom.</figcaption>
+      </figure>
+      <figure class="media media-3 sheet">
+        <div class="media-frame"><img src="assets/img/menu-food.jpg" alt="Food menu printed on Skylight blue paper" loading="lazy"></div>
+        <figcaption class="media-caption">Food menu on Skylight.</figcaption>
+      </figure>
+      <figure class="media media-3 sheet">
+        <div class="media-frame"><img src="assets/img/menu-christmas.jpg" alt="Christmas menu printed on Happy hour violet paper with a cactus drawing" loading="lazy"></div>
+        <figcaption class="media-caption">Christmas menu on Happy hour.</figcaption>
+      </figure>
+      <figure class="media media-3">
+        <div class="media-frame"><img src="assets/img/menu-hand.jpg" alt="Black menu card held at a dinner table" loading="lazy"></div>
+        <figcaption class="media-caption">Events menu, white on black.</figcaption>
+      </figure>
+      <figure class="media media-3">
+        <div class="media-frame"><img src="assets/img/print-stack.jpg" alt="Stack of red, black and white printed matter" loading="lazy"></div>
+        <figcaption class="media-caption">Posters, flyers and menus share one system.</figcaption>
+      </figure>
+    </div>
+
+    <div class="dl-row">
+      <span>Download templates</span>
+      <a class="dl-btn" aria-disabled="true">Menu templates, Word: coming soon</a>
+    </div>
+  </section>
+
+  <!-- ─────────── 06 IN USE ─────────── -->
+  <section id="in-use" class="stack">
+    <div class="text-3-3-6 sec-head">
+      <h2 class="c-label">06</h2>
+      <h2 class="c-label">In use</h2>
+      <div class="c-body">
+        <p>The playful part against the polished room. Photos show the place as it is: the hall, the food, the people.</p>
+      </div>
+    </div>
+    <div class="row">
+      <figure class="media media-3"><div class="media-frame"><img src="assets/img/poster-blue.jpg" alt="Skylight blue poster leaning on a wall" loading="lazy"></div></figure>
+      <figure class="media media-3"><div class="media-frame"><img src="assets/img/flyer-grey.jpg" alt="Grey flyers with white drawings" loading="lazy"></div></figure>
+      <figure class="media media-3"><div class="media-frame"><img src="assets/img/flyers.jpg" alt="White and red flyers among plants" loading="lazy"></div></figure>
+      <figure class="media media-3"><div class="media-frame"><img src="assets/img/pita.jpg" alt="Fresh pita with dip on a terrazzo table" loading="lazy"></div></figure>
+      <figure class="media media-6"><div class="media-frame"><img src="assets/img/venue-booths.jpg" alt="Ry's dining hall with green booths and the stone oven" loading="lazy"></div></figure>
+      <figure class="media media-6"><div class="media-frame"><img src="assets/img/people-dinner.jpg" alt="Guests at a long dinner table" loading="lazy"></div></figure>
+      <figure class="media media-3"><div class="media-frame"><img src="assets/img/food-oven.jpg" alt="Bread baking in the stone oven" loading="lazy"></div><figcaption class="media-caption">Photo: Henriette Heimdal</figcaption></figure>
+      <figure class="media media-3"><div class="media-frame"><img src="assets/img/food-meze.jpg" alt="Meze plates on green ceramics" loading="lazy"></div></figure>
+      <figure class="media media-3"><div class="media-frame"><img src="assets/img/drinks.jpg" alt="A drink being poured outdoors" loading="lazy"></div></figure>
+      <figure class="media media-3"><div class="media-frame"><img src="assets/img/tote.jpg" alt="Red tote bag with a large black drawing of a figure and a fork" loading="lazy"></div></figure>
+    </div>
+  </section>
+
+  <!-- ─────────── 07 DOWNLOADS ─────────── -->
+  <section id="downloads" class="stack downloads">
+    <div class="text-3-3-6 sec-head">
+      <h2 class="c-label">07</h2>
+      <h2 class="c-label">Downloads</h2>
+      <div class="c-body"><p>Everything in one place. Ask us if something's missing.</p></div>
+    </div>
+    <div class="row" style="row-gap:var(--gutter)">
+      <div class="box box-ink">
+        <div class="box-top"><a class="dl" href="assets/downloads/Ry_Logopakke.zip" download>Logo package</a></div>
+        <div class="box-bottom"><div class="box-row"><span class="cell-3 box-muted">SVG, PNG, PDF and GIF<br>RGB and CMYK</span><span class="cell-3 box-muted">ZIP · 2.4 MB</span></div></div>
+      </div>
+      <div class="box box-spicy">
+        <div class="box-top"><a class="dl" href="assets/downloads/Ry_Illustrasjoner.zip" download>Illustrations</a></div>
+        <div class="box-bottom"><div class="box-row"><span class="cell-3 box-muted">8 animated GIFs in 5 colours, plus 10 still PNGs. 1080 px</span><span class="cell-3 box-muted">ZIP · 13 MB</span></div></div>
+      </div>
+      <div class="box box-sky">
+        <div class="box-top"><span>Menu templates</span></div>
+        <div class="box-bottom"><div class="box-row"><span class="cell-3 box-muted">Word</span><span class="cell-3 box-muted">Coming soon</span></div></div>
+      </div>
+      <div class="box box-pita">
+        <div class="box-top"><a class="dl" href="assets/downloads/A2Z_Faucet.zip" download>A2Z Faucet</a></div>
+        <div class="box-bottom"><div class="box-row"><span class="cell-3 box-muted">OTF, WOFF and variable TTF, 15 files</span><span class="cell-3 box-muted">ZIP · 0.9 MB</span></div></div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="row">
+      <div><span style="color:var(--muted)">Ry</span><br>Ryfylkegata 11<br>4014 Stavanger</div>
+      <div><span style="color:var(--muted)">Identity by</span><br>Studio Blunt, 2024</div>
+      <div><span style="color:var(--muted)">Questions</span><br><a href="mailto:hello@studioblunt.com">hello@studioblunt.com</a></div>
+      <div><span style="color:var(--muted)">Version</span><br>1.0 · October 2026</div>
+    </div>
+  </footer>
+</main>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+(function () {
+  // ---------- Colour swatches ----------
+  var COLOURS = [
+    { name: "Spicy",      hex: "#F92E18", paper: "Gmund Colors Matt 92", dark: false },
+    { name: "Happy hour", hex: "#C590F8", paper: "Gmund Colors Matt 44" },
+    { name: "Pink gin",   hex: "#FFD8D6", paper: "Gmund Colors Matt 11" },
+    { name: "Pita",       hex: "#F2E9E4", paper: "Gmund Colors Matt 49" },
+    { name: "Skylight",   hex: "#BFD9EF", paper: "Gmund Colors Matt 62" },
+    { name: "Black",      hex: "#000000", paper: "Ink and black stock", dark: true },
+    { name: "White",      hex: "#FFFFFF", paper: "Ink and white stock" }
+  ];
+  function rgb(hex) { var n = parseInt(hex.slice(1), 16); return [n >> 16, (n >> 8) & 255, n & 255].join(" ") }
+
+  var toast = document.getElementById("toast"), tt;
+  function say(msg) {
+    toast.textContent = msg; toast.classList.add("show");
+    clearTimeout(tt); tt = setTimeout(function () { toast.classList.remove("show") }, 1400);
+  }
+  function copy(text, done) {
+    var ok = function () { done && done(); say(text + " copied") };
+    if (navigator.clipboard && window.isSecureContext) navigator.clipboard.writeText(text).then(ok, fallback); else fallback();
+    function fallback() {
+      var t = document.createElement("textarea"); t.value = text; document.body.appendChild(t); t.select();
+      try { document.execCommand("copy"); ok() } catch (e) {} t.remove();
+    }
+  }
+
+  var sw = document.getElementById("swatches");
+  COLOURS.forEach(function (c) {
+    var b = document.createElement("button");
+    b.type = "button";
+    b.className = "box swatch" + (c.dark ? " on-dark" : "") + (c.hex === "#FFFFFF" ? " swatch-white" : "");
+    b.style.background = c.hex;
+    b.setAttribute("aria-label", c.name + ", " + c.hex + ". Copy hex");
+    b.innerHTML =
+      '<div class="box-top"><span class="box-lead">' + c.name + '</span></div>' +
+      '<div class="box-bottom"><div class="box-row">' +
+        '<span class="cell-2 box-muted">Hex</span><span class="cell-4" style="grid-column:span 4">' + c.hex + '</span>' +
+        '<span class="cell-2 box-muted">RGB</span><span class="cell-4" style="grid-column:span 4">' + rgb(c.hex) + '</span>' +
+        '<span class="cell-2 box-muted">Paper</span><span class="cell-4" style="grid-column:span 4">' + c.paper + '</span>' +
+      '</div></div>';
+    b.addEventListener("click", function () {
+      copy(c.hex, function () { b.classList.add("is-copied"); setTimeout(function () { b.classList.remove("is-copied") }, 1200) });
+    });
+    sw.appendChild(b);
+  });
+  // A paper note fills the eighth slot so the grid closes cleanly.
+  var note = document.createElement("div");
+  note.className = "box swatch";
+  note.style.cssText = "cursor:default;border:1px solid var(--border);background:transparent";
+  note.innerHTML = '<div class="box-top"><span class="box-lead">Print on colour, not with colour.</span></div>' +
+    '<div class="box-bottom"><span class="box-muted">Gmund Colors Matt, ordered through HBO/Gmund. Hex values are for screens only.</span></div>';
+  sw.appendChild(note);
+
+  // ---------- Type tester weight ----------
+  var wght = document.getElementById("wght"), wOut = document.getElementById("wghtOut");
+  var tester = document.querySelector(".tester");
+  wght.addEventListener("input", function () { tester.style.setProperty("--wght", wght.value); wOut.textContent = wght.value });
+
+  // ---------- Illustrations ----------
+  // Animated, pixelated GIFs. Every drawing exists in all five inks
+  // (assets/anim/<drawing>/<ink>.gif), so the ink chips swap files.
+  // Tiles are white; the two light inks switch them to black.
+  var ILLS = [["cowgirl", "Cowgirl"], ["glass", "Glass"], ["hund", "Hund"], ["kaktus", "Kaktus"],
+              ["kniffel", "Kniv og gaffel"], ["pizza", "Pizza"], ["pus", "Pus"], ["tunes", "Tunes"]];
+  var INK_HEX = { black: "#000000", spicy: "#F92E18", happyhour: "#C590F8", pinkgin: "#FFD8D6", white: "#FFFFFF" };
+  var ink = "black", tiles = [];
+  var grid = document.getElementById("ills");
+  ILLS.forEach(function (d) {
+    var fig = document.createElement("figure");
+    fig.className = "ill";
+    var img = document.createElement("img"); img.alt = d[1] + ", animated drawing"; img.loading = "lazy";
+    var cap = document.createElement("figcaption"); cap.textContent = d[1];
+    var a = document.createElement("a"); a.setAttribute("aria-label", "Download " + d[1] + " GIF"); a.textContent = "↓ GIF";
+    fig.append(img, cap, a); grid.appendChild(fig);
+    tiles.push({ id: d[0], img: img, a: a });
+  });
+  function apply() {
+    var dark = ink === "white" || ink === "pinkgin";
+    grid.style.setProperty("--ill-bg", dark ? "#000" : "#fff");
+    grid.style.setProperty("--ill-fg", INK_HEX[ink]);
+    tiles.forEach(function (t) {
+      var src = "assets/anim/" + t.id + "/" + ink + ".gif";
+      if (t.img.getAttribute("src") !== src) t.img.src = src;
+      t.a.href = src; t.a.download = "Ry_" + t.id + "_" + ink + ".gif";
+    });
+  }
+  document.querySelectorAll(".chip").forEach(function (c) {
+    c.addEventListener("click", function () {
+      document.querySelectorAll(".chip[data-ink]").forEach(function (o) { o.setAttribute("aria-pressed", o === c) });
+      ink = c.dataset.ink;
+      apply();
+    });
+  });
+  apply();
+
+  // ---------- Downloads ----------
+  // Off disk or on an ordinary host, <a download> just works. Inside the
+  // claude.ai viewer a plain download link is inert, so when the viewer's
+  // `downloads` capability answers, clicks go through its save prompt.
+  // Published artifacts can't host .zip files, so the packages travel as
+  // their separate files and are zipped in the viewer's browser on click.
+  // Generated from the folders under assets/ — regenerate if they change.
+  var BUNDLES = {"Ry_Logopakke.zip": [["assets/packs/logo/DIGITAL/RGB/GIF/Ry_logo_animated_1080_hvit.gif", "Ry_Logopakke/DIGITAL/RGB/GIF/Ry_logo_animated_1080_hvit.gif"], ["assets/packs/logo/DIGITAL/RGB/GIF/Ry_logo_animated_1080_sort.gif", "Ry_Logopakke/DIGITAL/RGB/GIF/Ry_logo_animated_1080_sort.gif"], ["assets/packs/logo/DIGITAL/RGB/PDF/Ry_RBG_hvit_270.pdf", "Ry_Logopakke/DIGITAL/RGB/PDF/Ry_RBG_hvit_270.pdf"], ["assets/packs/logo/DIGITAL/RGB/PDF/Ry_RBG_sort_270.pdf", "Ry_Logopakke/DIGITAL/RGB/PDF/Ry_RBG_sort_270.pdf"], ["assets/packs/logo/DIGITAL/RGB/PDF/Ry_RGB_hvit_1080.pdf", "Ry_Logopakke/DIGITAL/RGB/PDF/Ry_RGB_hvit_1080.pdf"], ["assets/packs/logo/DIGITAL/RGB/PDF/Ry_RGB_hvit_540.pdf", "Ry_Logopakke/DIGITAL/RGB/PDF/Ry_RGB_hvit_540.pdf"], ["assets/packs/logo/DIGITAL/RGB/PDF/Ry_RGB_hvit_96.pdf", "Ry_Logopakke/DIGITAL/RGB/PDF/Ry_RGB_hvit_96.pdf"], ["assets/packs/logo/DIGITAL/RGB/PDF/Ry_RGB_sort_1080.pdf", "Ry_Logopakke/DIGITAL/RGB/PDF/Ry_RGB_sort_1080.pdf"], ["assets/packs/logo/DIGITAL/RGB/PDF/Ry_RGB_sort_540.pdf", "Ry_Logopakke/DIGITAL/RGB/PDF/Ry_RGB_sort_540.pdf"], ["assets/packs/logo/DIGITAL/RGB/PDF/Ry_RGB_sort_96.pdf", "Ry_Logopakke/DIGITAL/RGB/PDF/Ry_RGB_sort_96.pdf"], ["assets/packs/logo/DIGITAL/RGB/PNG/1x/Ry_RBG_hvit_270.png", "Ry_Logopakke/DIGITAL/RGB/PNG/1x/Ry_RBG_hvit_270.png"], ["assets/packs/logo/DIGITAL/RGB/PNG/1x/Ry_RBG_sort_270.png", "Ry_Logopakke/DIGITAL/RGB/PNG/1x/Ry_RBG_sort_270.png"], ["assets/packs/logo/DIGITAL/RGB/PNG/1x/Ry_RGB_hvit_1080.png", "Ry_Logopakke/DIGITAL/RGB/PNG/1x/Ry_RGB_hvit_1080.png"], ["assets/packs/logo/DIGITAL/RGB/PNG/1x/Ry_RGB_hvit_540.png", "Ry_Logopakke/DIGITAL/RGB/PNG/1x/Ry_RGB_hvit_540.png"], ["assets/packs/logo/DIGITAL/RGB/PNG/1x/Ry_RGB_hvit_96.png", "Ry_Logopakke/DIGITAL/RGB/PNG/1x/Ry_RGB_hvit_96.png"], ["assets/packs/logo/DIGITAL/RGB/PNG/1x/Ry_RGB_sort_1080.png", "Ry_Logopakke/DIGITAL/RGB/PNG/1x/Ry_RGB_sort_1080.png"], ["assets/packs/logo/DIGITAL/RGB/PNG/1x/Ry_RGB_sort_540.png", "Ry_Logopakke/DIGITAL/RGB/PNG/1x/Ry_RGB_sort_540.png"], ["assets/packs/logo/DIGITAL/RGB/PNG/1x/Ry_RGB_sort_96.png", "Ry_Logopakke/DIGITAL/RGB/PNG/1x/Ry_RGB_sort_96.png"], ["assets/packs/logo/DIGITAL/RGB/PNG/2x/Ry_RBG_hvit_270@2x.png", "Ry_Logopakke/DIGITAL/RGB/PNG/2x/Ry_RBG_hvit_270@2x.png"], ["assets/packs/logo/DIGITAL/RGB/PNG/2x/Ry_RBG_sort_270@2x.png", "Ry_Logopakke/DIGITAL/RGB/PNG/2x/Ry_RBG_sort_270@2x.png"], ["assets/packs/logo/DIGITAL/RGB/PNG/2x/Ry_RGB_hvit_1080@2x.png", "Ry_Logopakke/DIGITAL/RGB/PNG/2x/Ry_RGB_hvit_1080@2x.png"], ["assets/packs/logo/DIGITAL/RGB/PNG/2x/Ry_RGB_hvit_540@2x.png", "Ry_Logopakke/DIGITAL/RGB/PNG/2x/Ry_RGB_hvit_540@2x.png"], ["assets/packs/logo/DIGITAL/RGB/PNG/2x/Ry_RGB_hvit_96@2x.png", "Ry_Logopakke/DIGITAL/RGB/PNG/2x/Ry_RGB_hvit_96@2x.png"], ["assets/packs/logo/DIGITAL/RGB/PNG/2x/Ry_RGB_sort_1080@2x.png", "Ry_Logopakke/DIGITAL/RGB/PNG/2x/Ry_RGB_sort_1080@2x.png"], ["assets/packs/logo/DIGITAL/RGB/PNG/2x/Ry_RGB_sort_540@2x.png", "Ry_Logopakke/DIGITAL/RGB/PNG/2x/Ry_RGB_sort_540@2x.png"], ["assets/packs/logo/DIGITAL/RGB/PNG/2x/Ry_RGB_sort_96@2x.png", "Ry_Logopakke/DIGITAL/RGB/PNG/2x/Ry_RGB_sort_96@2x.png"], ["assets/packs/logo/DIGITAL/RGB/SVG/Ry_RBG_hvit_270.svg", "Ry_Logopakke/DIGITAL/RGB/SVG/Ry_RBG_hvit_270.svg"], ["assets/packs/logo/DIGITAL/RGB/SVG/Ry_RBG_sort_270.svg", "Ry_Logopakke/DIGITAL/RGB/SVG/Ry_RBG_sort_270.svg"], ["assets/packs/logo/DIGITAL/RGB/SVG/Ry_RGB_hvit_1080.svg", "Ry_Logopakke/DIGITAL/RGB/SVG/Ry_RGB_hvit_1080.svg"], ["assets/packs/logo/DIGITAL/RGB/SVG/Ry_RGB_hvit_540.svg", "Ry_Logopakke/DIGITAL/RGB/SVG/Ry_RGB_hvit_540.svg"], ["assets/packs/logo/DIGITAL/RGB/SVG/Ry_RGB_sort_1080.svg", "Ry_Logopakke/DIGITAL/RGB/SVG/Ry_RGB_sort_1080.svg"], ["assets/packs/logo/DIGITAL/RGB/SVG/Ry_RGB_sort_540.svg", "Ry_Logopakke/DIGITAL/RGB/SVG/Ry_RGB_sort_540.svg"], ["assets/packs/logo/DIGITAL/SOME/Ry_SoMe_profile.png", "Ry_Logopakke/DIGITAL/SOME/Ry_SoMe_profile.png"], ["assets/packs/logo/TRYKK/CMYK/PDF/Ry_CMYK_hvit_250mm.pdf", "Ry_Logopakke/TRYKK/CMYK/PDF/Ry_CMYK_hvit_250mm.pdf"], ["assets/packs/logo/TRYKK/CMYK/PDF/Ry_CMYK_hvit_25mm.pdf", "Ry_Logopakke/TRYKK/CMYK/PDF/Ry_CMYK_hvit_25mm.pdf"], ["assets/packs/logo/TRYKK/CMYK/PDF/Ry_CMYK_hvit_500mm.pdf", "Ry_Logopakke/TRYKK/CMYK/PDF/Ry_CMYK_hvit_500mm.pdf"], ["assets/packs/logo/TRYKK/CMYK/PDF/Ry_CMYK_hvit_75mm.pdf", "Ry_Logopakke/TRYKK/CMYK/PDF/Ry_CMYK_hvit_75mm.pdf"], ["assets/packs/logo/TRYKK/CMYK/PDF/Ry_CMYK_sort_250mm.pdf", "Ry_Logopakke/TRYKK/CMYK/PDF/Ry_CMYK_sort_250mm.pdf"], ["assets/packs/logo/TRYKK/CMYK/PDF/Ry_CMYK_sort_25mm.pdf", "Ry_Logopakke/TRYKK/CMYK/PDF/Ry_CMYK_sort_25mm.pdf"], ["assets/packs/logo/TRYKK/CMYK/PDF/Ry_CMYK_sort_500mm.pdf", "Ry_Logopakke/TRYKK/CMYK/PDF/Ry_CMYK_sort_500mm.pdf"], ["assets/packs/logo/TRYKK/CMYK/PDF/Ry_CMYK_sort_75mm.pdf", "Ry_Logopakke/TRYKK/CMYK/PDF/Ry_CMYK_sort_75mm.pdf"], ["assets/logo/ry-logo-animated-black.gif", "Ry_Logopakke/DIGITAL/RGB/GIF/Ry_logo_animert_sort.gif"], ["assets/logo/ry-logo-animated-white.gif", "Ry_Logopakke/DIGITAL/RGB/GIF/Ry_logo_animert_hvit.gif"]], "Ry_Illustrasjoner.zip": [["assets/anim/block-dance-wide.gif", "Ry_Illustrasjoner/Animert/Ekstra/block-dance-wide.gif"], ["assets/anim/block-dance.gif", "Ry_Illustrasjoner/Animert/Ekstra/block-dance.gif"], ["assets/anim/cowgirl/black.gif", "Ry_Illustrasjoner/Animert/cowgirl/black.gif"], ["assets/anim/cowgirl/happyhour.gif", "Ry_Illustrasjoner/Animert/cowgirl/happyhour.gif"], ["assets/anim/cowgirl/pinkgin.gif", "Ry_Illustrasjoner/Animert/cowgirl/pinkgin.gif"], ["assets/anim/cowgirl/spicy.gif", "Ry_Illustrasjoner/Animert/cowgirl/spicy.gif"], ["assets/anim/cowgirl/white.gif", "Ry_Illustrasjoner/Animert/cowgirl/white.gif"], ["assets/anim/glass/black.gif", "Ry_Illustrasjoner/Animert/glass/black.gif"], ["assets/anim/glass/happyhour.gif", "Ry_Illustrasjoner/Animert/glass/happyhour.gif"], ["assets/anim/glass/pinkgin.gif", "Ry_Illustrasjoner/Animert/glass/pinkgin.gif"], ["assets/anim/glass/spicy.gif", "Ry_Illustrasjoner/Animert/glass/spicy.gif"], ["assets/anim/glass/white.gif", "Ry_Illustrasjoner/Animert/glass/white.gif"], ["assets/anim/hund/black.gif", "Ry_Illustrasjoner/Animert/hund/black.gif"], ["assets/anim/hund/happyhour.gif", "Ry_Illustrasjoner/Animert/hund/happyhour.gif"], ["assets/anim/hund/pinkgin.gif", "Ry_Illustrasjoner/Animert/hund/pinkgin.gif"], ["assets/anim/hund/spicy.gif", "Ry_Illustrasjoner/Animert/hund/spicy.gif"], ["assets/anim/hund/white.gif", "Ry_Illustrasjoner/Animert/hund/white.gif"], ["assets/anim/kaktus/black.gif", "Ry_Illustrasjoner/Animert/kaktus/black.gif"], ["assets/anim/kaktus/happyhour.gif", "Ry_Illustrasjoner/Animert/kaktus/happyhour.gif"], ["assets/anim/kaktus/pinkgin.gif", "Ry_Illustrasjoner/Animert/kaktus/pinkgin.gif"], ["assets/anim/kaktus/spicy.gif", "Ry_Illustrasjoner/Animert/kaktus/spicy.gif"], ["assets/anim/kaktus/white.gif", "Ry_Illustrasjoner/Animert/kaktus/white.gif"], ["assets/anim/kniffel/black.gif", "Ry_Illustrasjoner/Animert/kniffel/black.gif"], ["assets/anim/kniffel/happyhour.gif", "Ry_Illustrasjoner/Animert/kniffel/happyhour.gif"], ["assets/anim/kniffel/pinkgin.gif", "Ry_Illustrasjoner/Animert/kniffel/pinkgin.gif"], ["assets/anim/kniffel/spicy.gif", "Ry_Illustrasjoner/Animert/kniffel/spicy.gif"], ["assets/anim/kniffel/white.gif", "Ry_Illustrasjoner/Animert/kniffel/white.gif"], ["assets/anim/pizza/black.gif", "Ry_Illustrasjoner/Animert/pizza/black.gif"], ["assets/anim/pizza/happyhour.gif", "Ry_Illustrasjoner/Animert/pizza/happyhour.gif"], ["assets/anim/pizza/pinkgin.gif", "Ry_Illustrasjoner/Animert/pizza/pinkgin.gif"], ["assets/anim/pizza/spicy.gif", "Ry_Illustrasjoner/Animert/pizza/spicy.gif"], ["assets/anim/pizza/white.gif", "Ry_Illustrasjoner/Animert/pizza/white.gif"], ["assets/anim/pus/black.gif", "Ry_Illustrasjoner/Animert/pus/black.gif"], ["assets/anim/pus/happyhour.gif", "Ry_Illustrasjoner/Animert/pus/happyhour.gif"], ["assets/anim/pus/pinkgin.gif", "Ry_Illustrasjoner/Animert/pus/pinkgin.gif"], ["assets/anim/pus/spicy.gif", "Ry_Illustrasjoner/Animert/pus/spicy.gif"], ["assets/anim/pus/white.gif", "Ry_Illustrasjoner/Animert/pus/white.gif"], ["assets/anim/tunes/black.gif", "Ry_Illustrasjoner/Animert/tunes/black.gif"], ["assets/anim/tunes/happyhour.gif", "Ry_Illustrasjoner/Animert/tunes/happyhour.gif"], ["assets/anim/tunes/pinkgin.gif", "Ry_Illustrasjoner/Animert/tunes/pinkgin.gif"], ["assets/anim/tunes/spicy.gif", "Ry_Illustrasjoner/Animert/tunes/spicy.gif"], ["assets/anim/tunes/white.gif", "Ry_Illustrasjoner/Animert/tunes/white.gif"], ["assets/anim/web-loop.gif", "Ry_Illustrasjoner/Animert/Ekstra/web-loop.gif"], ["assets/ill/Cowboy.png", "Ry_Illustrasjoner/Stille/Cowboy.png"], ["assets/ill/Glass.png", "Ry_Illustrasjoner/Stille/Glass.png"], ["assets/ill/Hjerte.png", "Ry_Illustrasjoner/Stille/Hjerte.png"], ["assets/ill/Hund.png", "Ry_Illustrasjoner/Stille/Hund.png"], ["assets/ill/Kaffe.png", "Ry_Illustrasjoner/Stille/Kaffe.png"], ["assets/ill/Kaktus.png", "Ry_Illustrasjoner/Stille/Kaktus.png"], ["assets/ill/Kniffel.png", "Ry_Illustrasjoner/Stille/Kniffel.png"], ["assets/ill/Pizza.png", "Ry_Illustrasjoner/Stille/Pizza.png"], ["assets/ill/Pus.png", "Ry_Illustrasjoner/Stille/Pus.png"], ["assets/ill/Tunes.png", "Ry_Illustrasjoner/Stille/Tunes.png"]], "A2Z_Faucet.zip": [["assets/packs/fonts/A2Z-Faucet-Black.otf", "A2Z_Faucet/OTF/A2Z-Faucet-Black.otf"], ["assets/packs/fonts/A2Z-Faucet-Bold.otf", "A2Z_Faucet/OTF/A2Z-Faucet-Bold.otf"], ["assets/packs/fonts/A2Z-Faucet-Light.otf", "A2Z_Faucet/OTF/A2Z-Faucet-Light.otf"], ["assets/packs/fonts/A2Z-Faucet-Medium.otf", "A2Z_Faucet/OTF/A2Z-Faucet-Medium.otf"], ["assets/packs/fonts/A2Z-Faucet-Regular.otf", "A2Z_Faucet/OTF/A2Z-Faucet-Regular.otf"], ["assets/packs/fonts/A2Z-Faucet-Thin.otf", "A2Z_Faucet/OTF/A2Z-Faucet-Thin.otf"], ["assets/packs/fonts/A2Z-Faucet-Ultra.otf", "A2Z_Faucet/OTF/A2Z-Faucet-Ultra.otf"], ["assets/fonts/A2Z-Faucet-Black.woff", "A2Z_Faucet/WOFF/A2Z-Faucet-Black.woff"], ["assets/fonts/A2Z-Faucet-Bold.woff", "A2Z_Faucet/WOFF/A2Z-Faucet-Bold.woff"], ["assets/fonts/A2Z-Faucet-Light.woff", "A2Z_Faucet/WOFF/A2Z-Faucet-Light.woff"], ["assets/fonts/A2Z-Faucet-Medium.woff", "A2Z_Faucet/WOFF/A2Z-Faucet-Medium.woff"], ["assets/fonts/A2Z-Faucet-Regular.woff", "A2Z_Faucet/WOFF/A2Z-Faucet-Regular.woff"], ["assets/fonts/A2Z-Faucet-Thin.woff", "A2Z_Faucet/WOFF/A2Z-Faucet-Thin.woff"], ["assets/fonts/A2Z-Faucet-Ultra.woff", "A2Z_Faucet/WOFF/A2Z-Faucet-Ultra.woff"], ["assets/fonts/A2Z-Faucet-VAR.ttf", "A2Z_Faucet/Variable/A2Z-Faucet-VAR wght.ttf"]], "Ry_Logo_SVG.zip": [["assets/packs/logo/DIGITAL/RGB/SVG/Ry_RBG_hvit_270.svg", "Ry_Logo_SVG/DIGITAL/RGB/SVG/Ry_RBG_hvit_270.svg"], ["assets/packs/logo/DIGITAL/RGB/SVG/Ry_RBG_sort_270.svg", "Ry_Logo_SVG/DIGITAL/RGB/SVG/Ry_RBG_sort_270.svg"], ["assets/packs/logo/DIGITAL/RGB/SVG/Ry_RGB_hvit_1080.svg", "Ry_Logo_SVG/DIGITAL/RGB/SVG/Ry_RGB_hvit_1080.svg"], ["assets/packs/logo/DIGITAL/RGB/SVG/Ry_RGB_hvit_540.svg", "Ry_Logo_SVG/DIGITAL/RGB/SVG/Ry_RGB_hvit_540.svg"], ["assets/packs/logo/DIGITAL/RGB/SVG/Ry_RGB_sort_1080.svg", "Ry_Logo_SVG/DIGITAL/RGB/SVG/Ry_RGB_sort_1080.svg"], ["assets/packs/logo/DIGITAL/RGB/SVG/Ry_RGB_sort_540.svg", "Ry_Logo_SVG/DIGITAL/RGB/SVG/Ry_RGB_sort_540.svg"]], "Ry_Logo_PNG.zip": [["assets/packs/logo/DIGITAL/RGB/PNG/1x/Ry_RBG_hvit_270.png", "Ry_Logo_PNG/DIGITAL/RGB/PNG/1x/Ry_RBG_hvit_270.png"], ["assets/packs/logo/DIGITAL/RGB/PNG/1x/Ry_RBG_sort_270.png", "Ry_Logo_PNG/DIGITAL/RGB/PNG/1x/Ry_RBG_sort_270.png"], ["assets/packs/logo/DIGITAL/RGB/PNG/1x/Ry_RGB_hvit_1080.png", "Ry_Logo_PNG/DIGITAL/RGB/PNG/1x/Ry_RGB_hvit_1080.png"], ["assets/packs/logo/DIGITAL/RGB/PNG/1x/Ry_RGB_hvit_540.png", "Ry_Logo_PNG/DIGITAL/RGB/PNG/1x/Ry_RGB_hvit_540.png"], ["assets/packs/logo/DIGITAL/RGB/PNG/1x/Ry_RGB_hvit_96.png", "Ry_Logo_PNG/DIGITAL/RGB/PNG/1x/Ry_RGB_hvit_96.png"], ["assets/packs/logo/DIGITAL/RGB/PNG/1x/Ry_RGB_sort_1080.png", "Ry_Logo_PNG/DIGITAL/RGB/PNG/1x/Ry_RGB_sort_1080.png"], ["assets/packs/logo/DIGITAL/RGB/PNG/1x/Ry_RGB_sort_540.png", "Ry_Logo_PNG/DIGITAL/RGB/PNG/1x/Ry_RGB_sort_540.png"], ["assets/packs/logo/DIGITAL/RGB/PNG/1x/Ry_RGB_sort_96.png", "Ry_Logo_PNG/DIGITAL/RGB/PNG/1x/Ry_RGB_sort_96.png"], ["assets/packs/logo/DIGITAL/RGB/PNG/2x/Ry_RBG_hvit_270@2x.png", "Ry_Logo_PNG/DIGITAL/RGB/PNG/2x/Ry_RBG_hvit_270@2x.png"], ["assets/packs/logo/DIGITAL/RGB/PNG/2x/Ry_RBG_sort_270@2x.png", "Ry_Logo_PNG/DIGITAL/RGB/PNG/2x/Ry_RBG_sort_270@2x.png"], ["assets/packs/logo/DIGITAL/RGB/PNG/2x/Ry_RGB_hvit_1080@2x.png", "Ry_Logo_PNG/DIGITAL/RGB/PNG/2x/Ry_RGB_hvit_1080@2x.png"], ["assets/packs/logo/DIGITAL/RGB/PNG/2x/Ry_RGB_hvit_540@2x.png", "Ry_Logo_PNG/DIGITAL/RGB/PNG/2x/Ry_RGB_hvit_540@2x.png"], ["assets/packs/logo/DIGITAL/RGB/PNG/2x/Ry_RGB_hvit_96@2x.png", "Ry_Logo_PNG/DIGITAL/RGB/PNG/2x/Ry_RGB_hvit_96@2x.png"], ["assets/packs/logo/DIGITAL/RGB/PNG/2x/Ry_RGB_sort_1080@2x.png", "Ry_Logo_PNG/DIGITAL/RGB/PNG/2x/Ry_RGB_sort_1080@2x.png"], ["assets/packs/logo/DIGITAL/RGB/PNG/2x/Ry_RGB_sort_540@2x.png", "Ry_Logo_PNG/DIGITAL/RGB/PNG/2x/Ry_RGB_sort_540@2x.png"], ["assets/packs/logo/DIGITAL/RGB/PNG/2x/Ry_RGB_sort_96@2x.png", "Ry_Logo_PNG/DIGITAL/RGB/PNG/2x/Ry_RGB_sort_96@2x.png"], ["assets/packs/logo/DIGITAL/SOME/Ry_SoMe_profile.png", "Ry_Logo_PNG/DIGITAL/SOME/Ry_SoMe_profile.png"]], "Ry_Logo_PDF.zip": [["assets/packs/logo/DIGITAL/RGB/PDF/Ry_RBG_hvit_270.pdf", "Ry_Logo_PDF/DIGITAL/RGB/PDF/Ry_RBG_hvit_270.pdf"], ["assets/packs/logo/DIGITAL/RGB/PDF/Ry_RBG_sort_270.pdf", "Ry_Logo_PDF/DIGITAL/RGB/PDF/Ry_RBG_sort_270.pdf"], ["assets/packs/logo/DIGITAL/RGB/PDF/Ry_RGB_hvit_1080.pdf", "Ry_Logo_PDF/DIGITAL/RGB/PDF/Ry_RGB_hvit_1080.pdf"], ["assets/packs/logo/DIGITAL/RGB/PDF/Ry_RGB_hvit_540.pdf", "Ry_Logo_PDF/DIGITAL/RGB/PDF/Ry_RGB_hvit_540.pdf"], ["assets/packs/logo/DIGITAL/RGB/PDF/Ry_RGB_hvit_96.pdf", "Ry_Logo_PDF/DIGITAL/RGB/PDF/Ry_RGB_hvit_96.pdf"], ["assets/packs/logo/DIGITAL/RGB/PDF/Ry_RGB_sort_1080.pdf", "Ry_Logo_PDF/DIGITAL/RGB/PDF/Ry_RGB_sort_1080.pdf"], ["assets/packs/logo/DIGITAL/RGB/PDF/Ry_RGB_sort_540.pdf", "Ry_Logo_PDF/DIGITAL/RGB/PDF/Ry_RGB_sort_540.pdf"], ["assets/packs/logo/DIGITAL/RGB/PDF/Ry_RGB_sort_96.pdf", "Ry_Logo_PDF/DIGITAL/RGB/PDF/Ry_RGB_sort_96.pdf"], ["assets/packs/logo/TRYKK/CMYK/PDF/Ry_CMYK_hvit_250mm.pdf", "Ry_Logo_PDF/TRYKK/CMYK/PDF/Ry_CMYK_hvit_250mm.pdf"], ["assets/packs/logo/TRYKK/CMYK/PDF/Ry_CMYK_hvit_25mm.pdf", "Ry_Logo_PDF/TRYKK/CMYK/PDF/Ry_CMYK_hvit_25mm.pdf"], ["assets/packs/logo/TRYKK/CMYK/PDF/Ry_CMYK_hvit_500mm.pdf", "Ry_Logo_PDF/TRYKK/CMYK/PDF/Ry_CMYK_hvit_500mm.pdf"], ["assets/packs/logo/TRYKK/CMYK/PDF/Ry_CMYK_hvit_75mm.pdf", "Ry_Logo_PDF/TRYKK/CMYK/PDF/Ry_CMYK_hvit_75mm.pdf"], ["assets/packs/logo/TRYKK/CMYK/PDF/Ry_CMYK_sort_250mm.pdf", "Ry_Logo_PDF/TRYKK/CMYK/PDF/Ry_CMYK_sort_250mm.pdf"], ["assets/packs/logo/TRYKK/CMYK/PDF/Ry_CMYK_sort_25mm.pdf", "Ry_Logo_PDF/TRYKK/CMYK/PDF/Ry_CMYK_sort_25mm.pdf"], ["assets/packs/logo/TRYKK/CMYK/PDF/Ry_CMYK_sort_500mm.pdf", "Ry_Logo_PDF/TRYKK/CMYK/PDF/Ry_CMYK_sort_500mm.pdf"], ["assets/packs/logo/TRYKK/CMYK/PDF/Ry_CMYK_sort_75mm.pdf", "Ry_Logo_PDF/TRYKK/CMYK/PDF/Ry_CMYK_sort_75mm.pdf"]], "Ry_Logo_GIF.zip": [["assets/packs/logo/DIGITAL/RGB/GIF/Ry_logo_animated_1080_hvit.gif", "Ry_Logo_GIF/DIGITAL/RGB/GIF/Ry_logo_animated_1080_hvit.gif"], ["assets/packs/logo/DIGITAL/RGB/GIF/Ry_logo_animated_1080_sort.gif", "Ry_Logo_GIF/DIGITAL/RGB/GIF/Ry_logo_animated_1080_sort.gif"], ["assets/logo/ry-logo-animated-black.gif", "Ry_Logo_GIF/Ry_logo_animert_sort.gif"], ["assets/logo/ry-logo-animated-white.gif", "Ry_Logo_GIF/Ry_logo_animert_hvit.gif"]]};
+  function get(src) {
+    return fetch(encodeURI(src)).then(function (r) { if (!r.ok) throw new Error(src + " " + r.status); return r.blob() });
+  }
+  function loadJSZip() {
+    if (window.JSZip) return Promise.resolve(window.JSZip);
+    return new Promise(function (ok, fail) {
+      var s = document.createElement("script");
+      s.src = "https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js";
+      s.onload = function () { ok(window.JSZip) }; s.onerror = fail;
+      document.head.appendChild(s);
+    });
+  }
+  function zipBundle(name) {
+    say("Packing " + name + "…");
+    return loadJSZip().then(function (JSZip) {
+      var zip = new JSZip();
+      return Promise.all(BUNDLES[name].map(function (e) {
+        return get(e[0]).then(function (b) { zip.file(e[1], b) });
+      })).then(function () { return zip.generateAsync({ type: "blob" }) });
+    });
+  }
+
+  if (window.claude && window.claude.use) {
+    window.claude.use("downloads").then(function (dl) {
+      if (!dl) return;
+      document.addEventListener("click", function (e) {
+        var a = e.target.closest && e.target.closest("a[download]");
+        if (!a) return;
+        e.preventDefault();
+        var name = a.getAttribute("download") || a.getAttribute("href").split("/").pop();
+        var job = BUNDLES[name] ? zipBundle(name) : get(a.getAttribute("href"));
+        job
+          .then(function (blob) { return dl.save({ filename: name, data: blob }) })
+          .then(function () { say(name + " saved") })
+          .catch(function (err) {
+            if (err && err.code === "declined") return;
+            if (err && err.code === "rate_limited") return say("A save is already open. Finish that one first.");
+            say("Couldn't save " + name + ". Ask hello@studioblunt.com for the file.");
+          });
+      });
+    });
+  }
+})();
+</script>

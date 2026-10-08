@@ -1,0 +1,757 @@
+/* ============================================================
+   STUDIO BLUNT — TOKENS
+   ============================================================
+   Two independent axes, composed:
+
+     data-theme="light|medium|dark|yellow|orange|violet"   → colour
+     data-bluntness="0..6"                                 → density
+
+   Colour never changes with bluntness. Density never changes
+   with theme. Any combination is valid.
+
+   Everything numeric is registered with @property so it
+   INTERPOLATES — the slider animates with zero JavaScript.
+
+   Ported from Design Kitchen (Lovable), with the orphaned
+   --btn-* tokens fixed and the 36 hand-maintained tint
+   aliases collapsed into 6 RGB triplets.
+   ============================================================ */
+
+
+/* ------------------------------------------------------------
+   1 · TYPE FILES
+   Three files. Regular, Regular Italic, Bold.
+   Medium (500) and Semibold (600) are deliberately not shipped.
+   ------------------------------------------------------------ */
+
+/* The .woff2 files are listed first and don't exist yet — convert the
+   .ttf originals and they'll be picked up automatically, no CSS change.
+   Until then the browser falls through to the .ttf that is actually in
+   fonts/. TTF is ~4x the bytes of woff2, so convert before launch. */
+
+@font-face {
+  font-family: "Brockmann";
+  src: url("fonts/brockmann-regular.woff2") format("woff2"),
+       url("fonts/brockmann-regular-webfont.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+  unicode-range: U+0000-00FF, U+0131, U+2000-206F, U+2074, U+20AC, U+2122, U+2212;
+}
+
+@font-face {
+  font-family: "Brockmann";
+  src: url("fonts/brockmann-regular-italic.woff2") format("woff2"),
+       url("fonts/brockmann-regularitalic-webfont.ttf") format("truetype");
+  font-weight: 400;
+  font-style: italic;
+  font-display: swap;
+  unicode-range: U+0000-00FF, U+0131, U+2000-206F, U+2074, U+20AC, U+2122, U+2212;
+}
+
+@font-face {
+  font-family: "Brockmann";
+  src: url("fonts/brockmann-bold.woff2") format("woff2"),
+       url("fonts/brockmann-bold-webfont.ttf") format("truetype");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+  unicode-range: U+0000-00FF, U+0131, U+2000-206F, U+2074, U+20AC, U+2122, U+2212;
+}
+
+/* Metric-matched fallback — kills the layout shift while Brockmann loads.
+   TODO: generate the real numbers with `npx fontpie fonts/brockmann-regular.woff2`
+   and paste them in. The values below are placeholders and WILL be slightly wrong. */
+@font-face {
+  font-family: "Brockmann Fallback";
+  src: local("Arial");
+  size-adjust: 100%;
+  ascent-override: 90%;
+  descent-override: 22%;
+  line-gap-override: 0%;
+}
+
+
+/* ------------------------------------------------------------
+   2 · INTERPOLATABLE REGISTRATIONS
+   Only these change with bluntness. Registering them is what
+   makes the slider animate in pure CSS.
+
+   DISPLAY IS THE ONLY TYPE SIZE THAT MOVES. Heading, body and
+   detail are fixed constants (section 2b) — they are not
+   registered here because nothing ever interpolates them.
+   ------------------------------------------------------------ */
+
+@property --cols          { syntax: "<integer>"; inherits: true; initial-value: 4 }
+@property --fs-display    { syntax: "<length>"; inherits: true; initial-value: 120px }
+@property --lh-display    { syntax: "<number>"; inherits: true; initial-value: 0.98 }
+@property --track-display { syntax: "<length>"; inherits: true; initial-value: -0.02em }
+@property --bluntness     { syntax: "<number>"; inherits: true; initial-value: 3 }
+
+
+/* ------------------------------------------------------------
+   2b · THE FIXED SIDE OF THE SYSTEM
+   Declared once, identical at every bluntness level.
+
+   Type: only the display size carries the hierarchy argument.
+   Heading, body and detail stay put so the page stays readable
+   and nothing reflows as the slider moves.
+
+   Grid: margin and gutter are 16px everywhere. They used to ramp
+   (margin 24→16, gutter 0→32), which meant the page edge and the
+   column rhythm shifted under you as you dragged, and the 12-col
+   grid the nav and every component are authored on only actually
+   matched the Figma at two of the seven levels. THE COLUMN COUNT
+   IS THE VARIABLE — not the space around or between them.
+   ------------------------------------------------------------ */
+
+:root {
+  --fs-heading: 64px;
+  --fs-body:    24px;
+  --fs-detail:  14px;
+
+  --margin: 16px;
+  --gutter: 16px;
+}
+
+
+/* ------------------------------------------------------------
+   3 · COLOUR PRIMITIVES
+   Stored as RGB triplets so alpha composes inline:
+   rgb(var(--rgb-ink) / 0.15). This replaces 36 tint tokens.
+   ------------------------------------------------------------ */
+
+:root {
+  --rgb-ink:      24 26 30;      /* eerie black  #181A1E */
+  --rgb-paper:    231 229 225;   /* platinum     #E7E5E1 */
+  --rgb-georges:  198 255 0;     /* Georges Claude — the neon guy  #C6FF00 */
+  --rgb-violet:   75 8 161;      /*              #4B08A1 */
+  --rgb-orange:   255 82 29;     /*              #FF521D */
+  --rgb-white:    255 255 255;
+
+  --c-ink:      rgb(var(--rgb-ink));
+  --c-paper:    rgb(var(--rgb-paper));
+  --c-georges:  rgb(var(--rgb-georges));
+  --c-violet:   rgb(var(--rgb-violet));
+  --c-orange:   rgb(var(--rgb-orange));
+  --c-white:    rgb(var(--rgb-white));
+
+  /* Type */
+  --font-sans: "Brockmann", "Brockmann Fallback", system-ui, sans-serif;
+  --weight-regular: 400;
+  --weight-bold: 700;
+  --track-strap: 0.02em;
+
+  /* Space — base-8, doubling from step 3 */
+  --space-1: 8px;
+  --space-2: 16px;
+  --space-3: 24px;
+  --space-4: 48px;
+  --space-5: 96px;
+  --space-6: 128px;
+  --space-7: 192px;
+  --space-8: 256px;
+  /* The space scale is all multiples of 8, but there is deliberately no
+     --baseline / --row token: the type never sat on either grid, so
+     nothing consumed them. See §9. */
+
+  /* Width of one column of the 12-column master grid — the grid the nav,
+     the box components and the level-1 split are authored on.
+
+     There is deliberately no --master-margin / --master-gutter to go
+     with it. Those existed for exactly one turn, because --margin and
+     --gutter used to morph and the master grid had to be pinned against
+     them. Now that both are fixed at 16px there is one margin and one
+     gutter in the whole system, so a second pair of names would be the
+     --fs-nav mistake again.
+
+     PERCENTAGE EXPRESSION: this only means one column on something whose
+     containing block is the full page width (the fixed nav, the level-1
+     section). Don't use it inside a narrower element — put a real
+     12-track grid there instead. */
+  --master-col: calc(
+    (100% - 2 * var(--margin) - 11 * var(--gutter)) / 12
+  );
+
+  /* ------------------------------------------------------------
+     MOTION
+
+     TWO EASING SYSTEMS LIVE HERE AND THEY DO NOT SHARE A SYNTAX.
+
+       --ease        a CSS <easing-function>: cubic-bezier(), linear(),
+                     steps(), ease-out. Read by 13 CSS transition rules.
+       --*-ease      a GSAP ease NAME: power2.out, expo.in, back.out(1.7),
+                     elastic, none. Read by morph.js.
+
+     Putting a GSAP name in --ease invalidates every transition that
+     reads it — the declaration is dropped and the motion silently stops,
+     with no console error. (That is exactly what `--ease: "expo.in"`
+     did.) Putting a cubic-bezier() in a GSAP slot makes GSAP fall back
+     to its default instead. morph.js validates its side through
+     gsap.parseEase() and falls back rather than breaking, and it strips
+     quotes, so both `expo.in` and `"expo.in"` work there.
+
+     morph.js reads these FRESH on every transition, not cached at load —
+     change one in DevTools and the next drag uses it.
+     ------------------------------------------------------------ */
+
+  /* CSS transitions */
+  --dur-1: 420ms;
+  --dur-2: 420ms;
+  --dur-slider: 420ms;
+  --ease: cubic-bezier(1, 0, 0, 1);
+
+  /* THE SLIDER HOLD — what happens while you press and hold the slider.
+     Blur is the morph-blur mode; opacity is crossfade. Both use these. */
+  --hold-blur: 124px;          /* how far out of focus the stage goes */
+  --hold-dur: 2s;            /* how fast it gets there */
+  --hold-ease: sine.out;     /* going out of focus */
+  --hold-release-ease: sine.out;   /* pulling focus back on release */
+
+  /* THE TRANSITION ITSELF — GSAP eases, used on release. */
+  --morph-ease: sine.inOut;  /* items travelling to their new positions */
+  --enter-ease: sine.out;    /* things arriving */
+  --leave-ease: sine.in;     /* things leaving */
+
+  /* Borders */
+  --radius-0: 0px;
+  --radius-1: 8px;
+  --radius-control: 16px;   /* slider pill / toggle buttons */
+  --border-1: 1px;
+
+  /* Buttons — these were declared outside any selector in the
+     original and were being silently dropped. */
+  --btn-pad: 16px;
+  --btn-gap: 8px;
+  --btn-radius: 16px;
+  --btn-blur: 20px;
+
+  /* Icons — inlined SVGs (see .icon-stroke below) read this instead of
+     each shape carrying its own stroke-width="2" attribute. */
+  --icon-stroke: 2px;
+
+  /* Fixed chrome — nav bar, control bar, any always-on-top overlay UI.
+     One shared layer so they never accidentally clash with each other
+     or with page content that sets its own z-index. */
+  --z-chrome: 100;
+  /* There is deliberately no --z-behind. The level-0 poster used to sit
+     at -1 so a headline could lie over it; that headline is gone, and a
+     negative z-index made the poster a stacking context its own children
+     could not escape — which is what broke the shuffle control. */
+  /* One below the chrome: a shared element in flight rides above the
+     page it's crossing, but never over the nav or the slider you're
+     holding. See flyPair() in morph.js. */
+  --z-flight: 99;
+
+  /* There is deliberately NO --fs-nav. It used to exist because the
+     detail role was 12px, which was a touch small for the top bar — so
+     the nav got its own 14px token. The detail role IS 14px now, so the
+     two were the same number for the same reason and one of them was
+     pure duplication. The nav reads --fs-detail directly.
+
+     Small type in this system is one size: 14px, the detail role. If
+     something needs to be smaller than that, it's a signal the thing
+     shouldn't be there, not that the scale needs another step.
+
+     --fs-control-label is the "Less"/"More" wordmark beside the
+     bluntness slider — genuinely doesn't match any role, so it keeps
+     its own token rather than a coincidental reuse. */
+  --fs-control-label: 20px;
+  /* The nav sits directly on the page (no bar, see .site-head), so its
+     text is plain white rather than --fg/--muted — this is the dimmer
+     "secondary" tier for that white text (clock, counter, year, the ↓
+     scroll-anchor arrows), parallel to what --muted is for --fg. */
+  --nav-muted: rgb(var(--rgb-white) / 0.55);
+
+  /* Control-bar row height — shared by the slider pill and the square
+     toggle buttons so they line up regardless of which one changes. */
+  --control-size: 56px;
+
+  /* "Glass" surface (frosted pill/toggle backgrounds). Not theme-aware
+     yet — it's a fixed paper tint at every theme per the current spec;
+     revisit if that turns out wrong for the dark/violet/orange themes. */
+  --glass-bg: rgb(var(--rgb-paper) / 0.5);
+
+  /* 0 at levels 0–4, 1 at 5–6. Gates the popups, counters and
+     cookie theatre so junk components can check one flag. */
+  --junk: 0;
+
+  /* Grid overlays. Two of them, in different colours so they read when
+     both are on: --overlay-col follows the morphing --cols body grid,
+     --overlay-master is the fixed 12-column grid the nav and the
+     components are authored on. Kept low — at the original 25% the
+     columns washed the page out. Tune here. */
+  --overlay-col:    rgb(var(--rgb-georges) / 0.12);
+  --overlay-master: rgb(var(--rgb-orange)  / 0.14);
+}
+
+
+/* ------------------------------------------------------------
+   4 · SEMANTIC LAYER + THEMES
+   ------------------------------------------------------------ */
+
+:root,
+[data-theme="medium"] {
+  --bg: var(--c-paper);
+  --fg: var(--c-ink);
+  --surface: var(--c-white);
+  --surface-2: var(--c-paper);
+  --border:   rgb(var(--rgb-ink) / 0.15);
+  --hairline: rgb(var(--rgb-ink) / 0.10);
+  --muted:    rgb(var(--rgb-ink) / 0.50);
+  --subtle:   rgb(var(--rgb-ink) / 0.25);
+  --link: var(--fg);
+  --link-hover: var(--c-violet);
+  --focus: var(--c-georges);
+  --selection: rgb(var(--rgb-georges) / 0.25);
+  --accent: var(--c-georges);
+  --accent-2: var(--c-violet);
+  --danger: var(--c-orange);
+  --btn-bg: rgb(var(--rgb-white) / 0.5);
+}
+
+[data-theme="light"] {
+  --bg: var(--c-white);
+  --fg: var(--c-ink);
+  --surface: var(--c-white);
+  --surface-2: var(--c-paper);
+  --border:   rgb(var(--rgb-ink) / 0.15);
+  --hairline: rgb(var(--rgb-ink) / 0.10);
+  --muted:    rgb(var(--rgb-ink) / 0.50);
+  --subtle:   rgb(var(--rgb-ink) / 0.25);
+  --link: var(--c-ink);
+  --link-hover: var(--c-violet);
+  --focus: var(--c-georges);
+  --btn-bg: rgb(var(--rgb-paper) / 0.6);   /* was missing entirely */
+}
+
+[data-theme="dark"] {
+  --bg: var(--c-ink);
+  --fg: var(--c-paper);
+  --surface: var(--c-ink);
+  --surface-2: var(--c-ink);
+  --border:   rgb(var(--rgb-paper) / 0.15);
+  --hairline: rgb(var(--rgb-paper) / 0.10);
+  --muted:    rgb(var(--rgb-paper) / 0.50);
+  --subtle:   rgb(var(--rgb-paper) / 0.25);
+  --link: var(--c-paper);
+  --link-hover: var(--c-georges);
+  --focus: var(--c-georges);
+  --selection: rgb(var(--rgb-georges) / 0.25);
+  --btn-bg: rgb(var(--rgb-paper) / 0.25);
+}
+
+[data-theme="yellow"] {
+  --bg: var(--c-georges);
+  --fg: var(--c-ink);
+  --surface: var(--c-georges);
+  --surface-2: rgb(var(--rgb-georges) / 0.5);
+  --border:   rgb(var(--rgb-ink) / 0.15);
+  --hairline: rgb(var(--rgb-ink) / 0.10);
+  --muted:    rgb(var(--rgb-ink) / 0.50);
+  --subtle:   rgb(var(--rgb-ink) / 0.25);
+  --link: var(--c-ink);
+  --link-hover: var(--c-violet);
+  --focus: var(--c-ink);
+  --btn-bg: rgb(var(--rgb-white) / 0.5);
+}
+
+[data-theme="orange"] {
+  --bg: var(--c-orange);
+  --fg: var(--c-ink);
+  --surface: var(--c-orange);
+  --surface-2: rgb(var(--rgb-orange) / 0.5);
+  --border:   rgb(var(--rgb-ink) / 0.15);
+  --hairline: rgb(var(--rgb-ink) / 0.10);
+  --muted:    rgb(var(--rgb-ink) / 0.50);
+  --subtle:   rgb(var(--rgb-ink) / 0.25);
+  --link: var(--c-ink);
+  --link-hover: var(--c-white);
+  --focus: var(--c-ink);
+  --btn-bg: rgb(var(--rgb-white) / 0.35);  /* was falling back to platinum — wrong on orange */
+}
+
+[data-theme="violet"] {
+  --bg: var(--c-violet);
+  --fg: var(--c-paper);
+  --surface: var(--c-violet);
+  --surface-2: rgb(var(--rgb-violet) / 0.5);
+  --border:   rgb(var(--rgb-paper) / 0.15);
+  --hairline: rgb(var(--rgb-paper) / 0.10);
+  --muted:    rgb(var(--rgb-paper) / 0.50);
+  --subtle:   rgb(var(--rgb-paper) / 0.25);
+  --link: var(--c-paper);
+  --link-hover: var(--c-georges);
+  --focus: var(--c-georges);
+  --btn-bg: rgb(var(--rgb-paper) / 0.25);
+}
+
+
+/* ------------------------------------------------------------
+   5 · BLUNTNESS
+   Four type roles. Nothing else.
+
+   The idea: HIERARCHY ITSELF IS THE VARIABLE.
+   At 0 the page is almost flat — display barely larger than
+   body, so you have to actually read it. At 6 the hierarchy
+   screams and tells you where to look. That progression *is*
+   the argument the site is making.
+
+   ONLY --fs-display MOVES. Heading (64), body (24) and detail
+   (14) are constants set in section 2b. The hierarchy is
+   therefore expressed purely as the ratio between the headline
+   and a fixed baseline of text — at level 0 display is 40px
+   against 24px body, barely a step; at level 6 it is 306px
+   against the same 24px. The reading size never changes, so
+   the page stays legible at every position and the only thing
+   that reflows as you drag is the one headline.
+   ------------------------------------------------------------ */
+
+:root { transition:
+  /* --cols is deliberately NOT here. repeat() requires an integer; a
+     fractional value invalidates the declaration and collapses the grid
+     to a single column for the whole transition. Belt and braces: it is
+     also registered <integer> (§2), so it cannot hold a fraction even
+     if someone puts it back in this list. */
+  /* Nor --gutter / --margin / --fs-heading / --fs-body / --fs-detail:
+     all constants now, nothing left to transition. What actually moves
+     with the slider is the column count and the display size. */
+  --fs-display var(--dur-slider) var(--ease),
+  --lh-display var(--dur-slider) var(--ease),
+  --track-display var(--dur-slider) var(--ease);
+}
+
+/* 0 · NOW — the current site. Flat, quiet, one column. */
+[data-bluntness="0"] {
+  --bluntness: 0;
+  --cols: 1;;
+  --fs-display: 40px;  --lh-display: 1.10;  --track-display: -0.01em;
+  --junk: 0;
+}
+
+/* 1 · SIGNAL */
+[data-bluntness="1"] {
+  --bluntness: 1;
+  --cols: 1;;
+  --fs-display: 56px;  --lh-display: 1.05;  --track-display: -0.015em;
+  --junk: 0;
+}
+
+/* 2 · NAMED */
+[data-bluntness="2"] {
+  --bluntness: 2;
+  --cols: 2;;
+  --fs-display: 80px;  --lh-display: 1.02;  --track-display: -0.02em;
+  --junk: 0;
+}
+
+/* 3 · BLUNT — default.
+   Note there is no `:root` in this selector on purpose: the
+   @property initial-values above already ARE the level-3
+   numbers, so a page with no data-bluntness attribute renders
+   as level 3. Adding `:root` here would give it equal
+   specificity to the other level blocks and, being later in
+   the file, it would beat them all. */
+[data-bluntness="3"] {
+  --bluntness: 3;
+  --cols: 4;;
+  --fs-display: 120px;  --lh-display: 0.98;  --track-display: -0.02em;
+  --junk: 0;
+}
+
+/* 4 · STANDARD */
+[data-bluntness="4"] {
+  --bluntness: 4;
+  --cols: 6;;
+  --fs-display: 180px;  --lh-display: 0.96;  --track-display: -0.025em;
+  --junk: 0;
+}
+
+/* 5 · AGENCY */
+[data-bluntness="5"] {
+  --bluntness: 5;
+  --cols: 8;;
+  --fs-display: 240px;  --lh-display: 0.955;  --track-display: -0.03em;
+  --junk: 1;
+}
+
+/* 6 · MAXIMUM — the original Design Kitchen values live here.
+   306 was the top of the ramp all along. */
+[data-bluntness="6"] {
+  --bluntness: 6;
+  --cols: 12;;
+  --fs-display: 306px;  --lh-display: 0.955;  --track-display: -0.03em;
+  --junk: 1;
+}
+
+/* Reduced motion kills the TRANSITION, not the content.
+   (Earlier note about capping bluntness at 2 was wrong — that
+   would hide information from people who need less movement.) */
+/* GSAP takes over when JS boots. Without JS these CSS transitions are the
+   fallback — and the slider is a plain form that reloads the page anyway. */
+:root[data-js] { transition: none }
+
+@media (prefers-reduced-motion: reduce) {
+  :root { transition: none }
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+
+
+
+/* ------------------------------------------------------------
+   5b · LEVEL GATING
+   Two symmetric ladders. Put data-from="4" on anything that
+   should only exist from level 4 up; put data-until="1" on
+   anything that should exist only through level 1 and vanish
+   above it. Combine both to bound an element to a window
+   (e.g. data-from="2" data-until="3" = levels 2–3 only).
+
+   Flip fades things in and out; because display flips inside
+   the same single layout pass, it never causes a second jump.
+   The nav is built almost entirely out of these two attributes:
+   see NAVIGATION.md.
+   ------------------------------------------------------------ */
+
+/* data-from — hidden below the named level */
+:root[data-bluntness="0"] :is([data-from="1"],[data-from="2"],[data-from="3"],[data-from="4"],[data-from="5"],[data-from="6"]) { display: none }
+:root[data-bluntness="1"] :is([data-from="2"],[data-from="3"],[data-from="4"],[data-from="5"],[data-from="6"]) { display: none }
+:root[data-bluntness="2"] :is([data-from="3"],[data-from="4"],[data-from="5"],[data-from="6"]) { display: none }
+:root[data-bluntness="3"] :is([data-from="4"],[data-from="5"],[data-from="6"]) { display: none }
+:root[data-bluntness="4"] :is([data-from="5"],[data-from="6"]) { display: none }
+:root[data-bluntness="5"] :is([data-from="6"]) { display: none }
+
+/* data-until — hidden above the named level (mirror of the ladder above) */
+:root[data-bluntness="1"] [data-until="0"] { display: none }
+:root[data-bluntness="2"] :is([data-until="0"],[data-until="1"]) { display: none }
+:root[data-bluntness="3"] :is([data-until="0"],[data-until="1"],[data-until="2"]) { display: none }
+:root[data-bluntness="4"] :is([data-until="0"],[data-until="1"],[data-until="2"],[data-until="3"]) { display: none }
+:root[data-bluntness="5"] :is([data-until="0"],[data-until="1"],[data-until="2"],[data-until="3"],[data-until="4"]) { display: none }
+:root[data-bluntness="6"] :is([data-until="0"],[data-until="1"],[data-until="2"],[data-until="3"],[data-until="4"],[data-until="5"]) { display: none }
+
+
+/* ------------------------------------------------------------
+   6 · TYPE ROLES
+   Four sizes. Two weights. One italic.
+   ------------------------------------------------------------ */
+
+.t-display {
+  font-size: min(var(--fs-display), 15vw);
+  line-height: var(--lh-display);
+  letter-spacing: var(--track-display);
+  font-weight: var(--weight-regular);
+}
+
+.t-heading {
+  font-size: min(var(--fs-heading), 8vw);
+  line-height: 1.1;
+  letter-spacing: -0.01em;
+  font-weight: var(--weight-regular);
+}
+
+.t-body {
+  font-size: var(--fs-body);
+  line-height: 1.45;
+  font-weight: var(--weight-regular);
+}
+
+.t-detail {
+  font-size: var(--fs-detail);
+  line-height: 1.3;
+  letter-spacing: 0.01em;
+  font-weight: var(--weight-regular);
+}
+
+/* The only two variants you actually use */
+.t-strap {
+  font-size: var(--fs-body);
+  line-height: 1.2;
+  letter-spacing: var(--track-strap);
+  font-weight: var(--weight-bold);
+}
+
+.t-info {
+  font-size: var(--fs-body);
+  line-height: 1.45;
+  font-weight: var(--weight-regular);
+  font-style: italic;
+}
+
+
+/* ------------------------------------------------------------
+   7 · GRID
+   One variable. Same architecture as before, now driven by
+   bluntness instead of a breakpoint.
+   ------------------------------------------------------------ */
+
+.wrap {
+  width: 100%;
+  padding-inline: var(--margin);
+  margin-inline: auto;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(var(--cols), minmax(0, 1fr));
+  column-gap: var(--gutter);
+  row-gap: var(--gutter);
+}
+
+.grid > * { grid-column: span 1 }
+.full { grid-column: 1 / -1 }
+.half { grid-column: span max(1, round(down, calc(var(--cols) / 2), 1)) }
+
+/* Mobile: everything collapses, and bluntness only offers 0 / 3 / 6 */
+@media (max-width: 720px) {
+  :root { --cols: 1; }   /* margin + gutter are already fixed at 16 */
+  .grid > *, .half { grid-column: 1 / -1 }
+  .t-display { font-size: min(var(--fs-display), 18vw) }
+}
+
+
+/* ------------------------------------------------------------
+   8 · BASE
+   ------------------------------------------------------------ */
+
+*, *::before, *::after { box-sizing: border-box }
+
+body, h1, h2, h3, h4, p, ul, ol, li, figure, blockquote, dl, dd {
+  margin: 0;
+  padding: 0;
+}
+
+html { font-family: var(--font-sans) }
+
+body {
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--font-sans);
+  font-size: var(--fs-body);
+  line-height: 1.45;
+  font-weight: var(--weight-regular);
+  transition: background-color var(--dur-2) var(--ease),
+              color var(--dur-2) var(--ease);
+}
+
+::selection { background: var(--selection) }
+
+:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+}
+
+/* Headings carry no size of their own — role classes do that.
+   Keeps document structure and visual weight independent. */
+h1, h2, h3, h4 {
+  font-size: inherit;
+  font-weight: inherit;
+}
+
+
+/* ------------------------------------------------------------
+   9 · GRID OVERLAY  (ship it — showing your own grid is on-brand)
+   ------------------------------------------------------------ */
+
+/* Columns are vertical — scrolling doesn't move them, so a fixed
+   overlay is right and cheap. */
+.overlay {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 9999;
+}
+
+.overlay-cols {
+  position: absolute;
+  inset: 0 var(--margin);
+  display: grid;
+  grid-template-columns: repeat(var(--cols), 1fr);
+  gap: var(--gutter);
+}
+
+.overlay-cols > * { background: var(--overlay-col) }
+
+/* There were row (48px) and baseline (8px) overlays here too. They were
+   removed rather than fixed: no line-height in the system is a multiple
+   of 8 (body 34.8, detail 15.6, heading 70.4, strap 28.8), so nothing
+   ever sat on either grid and the overlays measured nothing. Bringing
+   them back means rounding the type first — see README. */
+
+
+/* ------------------------------------------------------------
+   10 · COMPONENTS — minimum viable set
+   ------------------------------------------------------------ */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--btn-gap);
+  padding: var(--btn-pad);
+  border: 0;
+  border-radius: var(--btn-radius);
+  font: inherit;
+  font-size: var(--fs-detail);
+  background: var(--btn-bg);
+  color: var(--fg);
+  backdrop-filter: blur(var(--btn-blur));
+  -webkit-backdrop-filter: blur(var(--btn-blur));
+  cursor: pointer;
+  transition: transform var(--dur-2) var(--ease),
+              background-color var(--dur-2) var(--ease);
+}
+
+.btn:hover  { transform: translateY(-1px) }
+.btn:active { transform: none }
+
+/* Frosted glass surface — slider pill, toggle buttons, anything else
+   that wants a translucent blurred chip rather than a flat fill. */
+.glass {
+  background: var(--glass-bg);
+  backdrop-filter: blur(var(--btn-blur));
+  -webkit-backdrop-filter: blur(var(--btn-blur));
+  border-radius: var(--radius-control);
+}
+
+/* Inlined SVG icons: put this on any stroked shape (circle/path/line)
+   instead of repeating stroke-width="2" vector-effect="non-scaling-stroke"
+   on every one. non-scaling-stroke keeps the line weight literal even if
+   the icon is later scaled via CSS rather than rendered at native size. */
+.icon-stroke {
+  stroke-width: var(--icon-stroke);
+  vector-effect: non-scaling-stroke;
+}
+
+.link {
+  color: var(--link);
+  text-decoration: underline;
+  text-underline-offset: 0.15em;
+  transition: color var(--dur-1) var(--ease);
+}
+.link:hover { color: var(--link-hover) }
+
+.rule {
+  height: var(--border-1);
+  background: var(--hairline);
+  border: 0;
+}
+
+
+/* ------------------------------------------------------------
+   11 · LOW ENERGY
+   Independent of bluntness and theme. Strips weight, not content.
+   Level 0 + low energy = the absolute minimum, ~20 kB, no JS.
+   ------------------------------------------------------------ */
+
+[data-energy="low"] {
+  --font-sans: ui-sans-serif, system-ui, -apple-system, Arial, sans-serif;
+  --btn-blur: 0px;
+}
+
+[data-energy="low"] { transition: none }
+[data-energy="low"] :is(.btn, .glass) { backdrop-filter: none; -webkit-backdrop-filter: none }
+[data-energy="low"] video,
+[data-energy="low"] iframe { display: none }
+[data-energy="low"] img { image-rendering: pixelated }
